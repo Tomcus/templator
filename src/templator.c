@@ -15,7 +15,7 @@ void templator_init(Templator* templator) {
 
 void templator_free(Templator* templator) {
     for (size_t i = 0; i < templator->templatesCnt; ++i) {
-        template_free(&templator->templates[0].template);
+        template_free(&templator->templates[0].templ);
     }
     free(templator->templates);
 }
@@ -33,7 +33,7 @@ bool templator_add_named_template(Templator* templator, const char* name, char* 
     NameAndTemplatePair* nameAndTemplate = &templator->templates[templator->templatesCnt];
     
     nameAndTemplate->name = name;
-    template_parse(&nameAndTemplate->template, data, len);
+    template_parse(&nameAndTemplate->templ, data, len);
 
     templator->templatesCnt ++;
 
@@ -43,7 +43,7 @@ bool templator_add_named_template(Templator* templator, const char* name, char* 
 Template* templator_get_template_by_name(const Templator* templator, const char* name) {
     for (size_t i = 0; i < templator->templatesCnt; ++i) {
         if (strcmp(templator->templates[i].name, name) == 0) {
-            return &templator->templates[i].template;
+            return &templator->templates[i].templ;
         }
     }
     return NULL;

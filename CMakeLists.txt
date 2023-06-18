@@ -2,11 +2,13 @@ cmake_minimum_required(VERSION 3.20)
 
 project(templator)
 
+find_package(Catch2 REQUIRED)
+
 add_library(templator STATIC
+    src/error.c
     src/instructions/insert_text_instruction.c
     src/instructions/insert_variable_instruction.c
     src/instructions.c
-    src/error.c
     src/parser.c
     src/template.c
     src/templator.c

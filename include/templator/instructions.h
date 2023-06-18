@@ -4,6 +4,11 @@
 #include "instructions/insert_text_instruction.h"
 #include "instructions/insert_variable_instruction.h"
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum {
     INSERT_TEXT,
     INSERT_VARIABLE_VALUE
@@ -21,5 +26,9 @@ void insert_text_instruction_init(Instruction* instruction, char* data, size_t l
 void insert_variable_instruction_init(Instruction* instruction, size_t nameIndex);
 
 void instruction_free(Instruction* instruction);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif//TEMPLATOR_INSTRUCTIONS_H

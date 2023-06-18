@@ -7,6 +7,10 @@
 
 #include "definitions.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum {
     VARIABLE_INT,
     VARIABLE_UINT,
@@ -45,5 +49,9 @@ void variables_clear_variables(Variables* variables);
 void variables_remove_variable(Variables* variables, const char* name);
 
 Variable* variables_get_variable(Variables* variables, const char* name);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif//TEMPLATOR_VARIABLES_H

@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef int(*validateChar)(int);
 typedef int(*validateStr)(char*, size_t);
 
@@ -21,5 +25,9 @@ void parser_skip(Parser* parser, size_t count);
 void parser_skip_from_end(Parser* parser, size_t count);
 void parser_skip_while(Parser* parser, validateChar validator);
 void parser_skip_while_from_end(Parser* parser, validateChar validator);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif//TEMPLATOR_PARSER_H

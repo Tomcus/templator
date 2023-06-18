@@ -9,9 +9,13 @@
 #include "variables.h"
 #include "template.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct  {
     const char* name;
-    Template template;
+    Template templ;
 } NameAndTemplatePair;
 
 typedef struct {
@@ -28,8 +32,12 @@ Template* templator_get_template_by_name(const Templator* templator, const char*
 
 typedef void(*AppendFunction)(void*, const char*, size_t);
 
-int templator_run(const Templator* templator, Template* template, Variables* variables, void* data, AppendFunction appendFunction);
+int templator_run(const Templator* templator, Template* templ, Variables* variables, void* data, AppendFunction appendFunction);
 int templator_run_named(const Templator* templator, const char* name, Variables* variables, void* data, AppendFunction appendFunction);
 int templator_run_external(const Templator* templator, char* templateData, size_t templateLen, Variables* variables, void* data, AppendFunction appendFunction);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif//TEMPLATOR_H
