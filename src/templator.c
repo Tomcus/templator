@@ -16,7 +16,7 @@ void templator_init(Templator* templator) {
 
 void templator_free(Templator* templator) {
     for (size_t i = 0; i < templator->templatesCnt; ++i) {
-        template_free(&templator->templates[0].templ);
+        templator_template_free(&templator->templates[0].templ);
     }
     free(templator->templates);
 }
@@ -36,7 +36,7 @@ int templator_add_named_template(Templator* templator, const char* name, char* d
     nameAndTemplate->name = name;
     TemplatorParser parser;
     templator_parser_init(&parser, data, len);
-    int res = template_parse(&nameAndTemplate->templ, &parser);
+    int res = templator_template_parse(&nameAndTemplate->templ, &parser);
     if (res < 0) {
         return res;
     }
@@ -46,7 +46,7 @@ int templator_add_named_template(Templator* templator, const char* name, char* d
     return 1;
 }
 
-Template* templator_get_template_by_name(const Templator* templator, const char* name) {
+TemplatorTemplate* templator_get_template_by_name(const Templator* templator, const char* name) {
     for (size_t i = 0; i < templator->templatesCnt; ++i) {
         if (strcmp(templator->templates[i].name, name) == 0) {
             return &templator->templates[i].templ;
@@ -56,7 +56,7 @@ Template* templator_get_template_by_name(const Templator* templator, const char*
 }
 
 int templator_run_named(const Templator* templator, const char* name, Variables* variables, void* data, AppendFunction appendFunction) {
-    Template* template = templator_get_template_by_name(templator, name);
+    TemplatorTemplate* template = templator_get_template_by_name(templator, name);
     
     if (template != NULL) {
         return templator_run(templator, template, variables, data, appendFunction);
@@ -65,23 +65,23 @@ int templator_run_named(const Templator* templator, const char* name, Variables*
 }
 
 int templator_run_external(const Templator* templator, char* templateData, size_t templateLen, Variables* variables, void* data, AppendFunction appendFunction) {
-    Template template;
+    TemplatorTemplate template;
     TemplatorParser parser;
     templator_parser_init(&parser, templateData, templateLen);
-    int res = template_parse(&template, &parser);
+    int res = templator_template_parse(&template, &parser);
 
     if (res < 0) {
-        template_free(&template);
+        templator_template_free(&template);
         return res;    
     }
 
     res = templator_run(templator, &template, variables, data, appendFunction);
 
-    template_free(&template);
+    templator_template_free(&template);
     return res;
 }
 
-int templator_run(const Templator* templator, Template* template, Variables* variables, void* data, AppendFunction appendFunction) {
+int templator_run(const Templator* templator, TemplatorTemplate* template, Variables* variables, void* data, AppendFunction appendFunction) {
     char buffer[TEMPLATOR_BUFFER_SIZE];
     for (size_t i = 0; i < template->instructionsCnt; ++i) {
         buffer[0] = 0;

@@ -45,15 +45,15 @@ TEST_CASE("Test invalid parsing", "[templating]") {
         "{% if (a > 0 && a < 100 || a != 500) %}{%endif%}"
     };
 
-    Template templ;
+    TemplatorTemplate templ;
 
     for (auto& str: testData) {
         TemplatorParser parser;
         parser.data = str.data();
         parser.len = str.size();
-        int res = template_parse(&templ, &parser);
+        int res = templator_template_parse(&templ, &parser);
         REQUIRE(res < 0);
-        template_free(&templ);
+        templator_template_free(&templ);
     }
 }
 

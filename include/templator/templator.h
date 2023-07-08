@@ -15,7 +15,7 @@ extern "C" {
 
 typedef struct  {
     const char* name;
-    Template templ;
+    TemplatorTemplate templ;
 } NameAndTemplatePair;
 
 typedef struct {
@@ -28,11 +28,11 @@ void templator_init(Templator* templator);
 void templator_free(Templator* templator);
 
 int templator_add_named_template(Templator* templator, const char* name, char* data, size_t len);
-Template* templator_get_template_by_name(const Templator* templator, const char* name);
+TemplatorTemplate* templator_get_template_by_name(const Templator* templator, const char* name);
 
 typedef void(*AppendFunction)(void*, const char*, size_t);
 
-int templator_run(const Templator* templator, Template* templ, Variables* variables, void* data, AppendFunction appendFunction);
+int templator_run(const Templator* templator, TemplatorTemplate* templ, Variables* variables, void* data, AppendFunction appendFunction);
 int templator_run_named(const Templator* templator, const char* name, Variables* variables, void* data, AppendFunction appendFunction);
 int templator_run_external(const Templator* templator, char* templateData, size_t templateLen, Variables* variables, void* data, AppendFunction appendFunction);
 

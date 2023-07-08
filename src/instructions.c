@@ -11,9 +11,9 @@ void templator_insert_variable_instruction_init(TemplatorInstruction* instructio
     insert_variable_data_init(&instruction->insertVariableData, nameIndex);
 }
 
-void templator_insert_conditional_subtemplate(TemplatorInstruction* instruction, Template subTemplate, TemplatorComparisonChain comp) {
+void templator_insert_conditional_subtemplate(TemplatorInstruction* instruction, TemplatorTemplate subTemplatorTemplate, TemplatorComparisonChain comp) {
     instruction->type = TEMPLATOR_INSTRUCTION_TYPE_INSERT_CONDITIONAL_SUBTEMPLATE;
-    conditional_insert_text_data_init(&instruction->conditionalInsertTextData, subTemplate, comp);
+    conditional_insert_text_data_init(&instruction->conditionalInsertTextData, subTemplatorTemplate, comp);
 }
 
 void templator_instruction_free(TemplatorInstruction* instruction) {

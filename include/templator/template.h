@@ -8,24 +8,24 @@
 extern "C" {
 #endif
 
-typedef struct TTemplate {
+typedef struct TTemplatorTemplate {
     TemplatorInstruction* instructions;
     size_t instructionsCnt;
     size_t instructionsCap;
     char** variables;
     size_t variablesCnt;
     size_t variablesCap;
-} Template;
+} TemplatorTemplate;
 
-int template_parse(Template* templ, TemplatorParser* parser);
-int template_parse_instruction(Template* temp, TemplatorParser commandTemplatorParser, TemplatorParser* afterCommandTemplatorParser);
-void template_free(Template* templ);
+int templator_template_parse(TemplatorTemplate* templ, TemplatorParser* parser);
+int templator_template_parse_instruction(TemplatorTemplate* temp, TemplatorParser commandTemplatorParser, TemplatorParser* afterCommandTemplatorParser);
+void templator_template_free(TemplatorTemplate* templ);
 
-TemplatorInstruction* template_add_instruction(Template* templ);
-size_t template_try_insert_variable(Template* templ, char* data, size_t len);
+TemplatorInstruction* templator_template_add_instruction(TemplatorTemplate* templ);
+size_t templator_template_try_insert_variable(TemplatorTemplate* templ, char* data, size_t len);
 
-int template_is_opening_bracket(char* data, size_t len);
-int template_is_closing_bracket(char* data, size_t len);
+int templator_template_is_opening_bracket(char* data, size_t len);
+int templator_template_is_closing_bracket(char* data, size_t len);
 
 #ifdef __cplusplus
 }

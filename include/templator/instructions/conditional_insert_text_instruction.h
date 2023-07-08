@@ -9,10 +9,10 @@ extern "C" {
 
 typedef struct {
     TemplatorComparisonChain chain;
-    struct TTemplate* templ;
+    struct TTemplatorTemplate* templ;
 } ConditionalInsertTextData;
 
-void conditional_insert_text_data_init(ConditionalInsertTextData* citd, struct TTemplate innerTemplate, TemplatorComparisonChain chain);
+void conditional_insert_text_data_init(ConditionalInsertTextData* citd, struct TTemplatorTemplate innerTemplatorTemplate, TemplatorComparisonChain chain);
 void conditional_insert_text_data_free(ConditionalInsertTextData* citd);
 
 #ifdef __cplusplus

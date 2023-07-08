@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-struct TTemplate;
+struct TTemplatorTemplate;
 
 typedef enum {
     TEMPLATOR_SIDE_COMPARISON_TYPE_LOCAL_VARIABLE,
@@ -67,15 +67,15 @@ bool templator_is_variable_truthy(Variable* var);
 bool templator_is_comparison_result_ok(TEMPLATOR_COMPARISON_OPERATOR op, TEMPLATOR_COMPARISON_RESULT res);
 int templator_compare_variables(Variable* a, Variable* b);
 
-int templator_comparison_chain_parse(TemplatorComparisonChain* compChain, TemplatorParser* parser, struct TTemplate* templ);
-int templator_comparison_parse(TemplatorComparison* comparison, TemplatorParser* parser, struct TTemplate* templ);
+int templator_comparison_chain_parse(TemplatorComparisonChain* compChain, TemplatorParser* parser, struct TTemplatorTemplate* templ);
+int templator_comparison_parse(TemplatorComparison* comparison, TemplatorParser* parser, struct TTemplatorTemplate* templ);
 int templator_comparison_chain_validate_operator(char* data, size_t len);
-int templator_comparison_chain_eval(TemplatorComparisonChain* compChain, struct TTemplate* templ, Variables* variables);
+int templator_comparison_chain_eval(TemplatorComparisonChain* compChain, struct TTemplatorTemplate* templ, Variables* variables);
 int templator_comparison_operator_validate(char* data, size_t len);
-Variable* templator_comparison_get_lhs(TemplatorComparison* comparison, struct TTemplate* templ, Variables* variables);
-Variable* templator_comparison_get_rhs(TemplatorComparison* comparison, struct TTemplate* templ, Variables* variables);
+Variable* templator_comparison_get_lhs(TemplatorComparison* comparison, struct TTemplatorTemplate* templ, Variables* variables);
+Variable* templator_comparison_get_rhs(TemplatorComparison* comparison, struct TTemplatorTemplate* templ, Variables* variables);
 
-int templator_comparison_eval(TemplatorComparison* comparison, struct TTemplate* templ, Variables* variables);
+int templator_comparison_eval(TemplatorComparison* comparison, struct TTemplatorTemplate* templ, Variables* variables);
 void templator_comparison_chain_free(TemplatorComparisonChain* compChain);
 
 #ifdef __cplusplus
