@@ -73,7 +73,7 @@ Token templator_parser_next_token(Parser* parser) {
     return res;
 }
 
-Token peek_next_token(Parser parser) {
+Token templator_parser_peek_token(Parser parser) {
     return templator_parser_next_token(&parser);
 }
 

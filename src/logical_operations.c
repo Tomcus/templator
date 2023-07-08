@@ -83,7 +83,7 @@ int templator_comparison_parse(Comparison* comparison, Parser* parser, Template*
             return TEMPLATOR_UNEXPECTED_TOKEN;
     }
 
-    Token opToken = peek_next_token(*parser);
+    Token opToken = templator_parser_peek_token(*parser);
     switch (opToken.type) {
         case PAREN_CLOSE:
             comparison->op = CMP_VARIABLE_EVAL;
