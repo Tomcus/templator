@@ -9,7 +9,7 @@
 #define TEMPLATOR_BUFFER_SIZE 1024
 
 void templator_init(Templator* templator) {
-    templator->templates = malloc(sizeof(NameAndTemplatePair) * TEMPLATOR_INITIAL_TEMPLATE_CAPACITY);
+    templator->templates = malloc(sizeof(TemplatorNameAndTemplatePair) * TEMPLATOR_INITIAL_TEMPLATE_CAPACITY);
     templator->templatesCap = TEMPLATOR_INITIAL_TEMPLATE_CAPACITY;
     templator->templatesCnt = 0;
 }
@@ -28,10 +28,10 @@ int templator_add_named_template(Templator* templator, const char* name, char* d
     
     if (templator->templatesCnt == templator->templatesCap) {
         templator->templatesCap *= 2;
-        templator->templates = realloc(templator->templates, templator->templatesCap * sizeof(NameAndTemplatePair));
+        templator->templates = realloc(templator->templates, templator->templatesCap * sizeof(TemplatorNameAndTemplatePair));
     }
 
-    NameAndTemplatePair* nameAndTemplate = &templator->templates[templator->templatesCnt];
+    TemplatorNameAndTemplatePair* nameAndTemplate = &templator->templates[templator->templatesCnt];
     
     nameAndTemplate->name = name;
     TemplatorParser parser;
@@ -55,7 +55,7 @@ TemplatorTemplate* templator_get_template_by_name(const Templator* templator, co
     return NULL;
 }
 
-int templator_run_named(const Templator* templator, const char* name, Variables* variables, void* data, AppendFunction appendFunction) {
+int templator_run_named(const Templator* templator, const char* name, Variables* variables, void* data, TemplatorAppendStrFunction appendFunction) {
     TemplatorTemplate* template = templator_get_template_by_name(templator, name);
     
     if (template != NULL) {
@@ -64,7 +64,7 @@ int templator_run_named(const Templator* templator, const char* name, Variables*
     return -1;
 }
 
-int templator_run_external(const Templator* templator, char* templateData, size_t templateLen, Variables* variables, void* data, AppendFunction appendFunction) {
+int templator_run_external(const Templator* templator, char* templateData, size_t templateLen, Variables* variables, void* data, TemplatorAppendStrFunction appendFunction) {
     TemplatorTemplate template;
     TemplatorParser parser;
     templator_parser_init(&parser, templateData, templateLen);
@@ -81,7 +81,7 @@ int templator_run_external(const Templator* templator, char* templateData, size_
     return res;
 }
 
-int templator_run(const Templator* templator, TemplatorTemplate* template, Variables* variables, void* data, AppendFunction appendFunction) {
+int templator_run(const Templator* templator, TemplatorTemplate* template, Variables* variables, void* data, TemplatorAppendStrFunction appendFunction) {
     char buffer[TEMPLATOR_BUFFER_SIZE];
     for (size_t i = 0; i < template->instructionsCnt; ++i) {
         buffer[0] = 0;
