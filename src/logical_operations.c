@@ -8,18 +8,18 @@
 #include <string.h>
 #include <stdio.h>
 
-bool templator_is_variable_truthy(TemplatorVariable* var) {
+bool templator_is_value_truthy(TemplatorValue* var) {
     if (var == NULL) {
         return false;
     }
 
     switch(var->type) {
-        case TEMPLATOR_VARIABLE_TYPE_INT:
+        case TEMPLATOR_VALUE_TYPE_INT:
             return var->i != 0; 
-        case TEMPLATOR_VARIABLE_TYPE_UINT:
+        case TEMPLATOR_VALUE_TYPE_UINT:
             return var->u > 0;
-        case TEMPLATOR_VARIABLE_TYPE_CSTR_OWN:
-        case TEMPLATOR_VARIABLE_TYPE_CSTR_REF:
+        case TEMPLATOR_VALUE_TYPE_CSTR_OWN:
+        case TEMPLATOR_VALUE_TYPE_CSTR_REF:
             return var->s.len > 0;
     }
     return false;
@@ -37,16 +37,16 @@ bool templator_is_comparison_result_ok(TEMPLATOR_COMPARISON_OPERATOR op, TEMPLAT
     return false;
 }
 
-const TemplatorCmpVariables VAR_CMPS[4][4] = {
-    {templator_cmp_int_int_variables, templator_cmp_int_int_variables, templator_unknown_cmp, templator_unknown_cmp},
-    {templator_cmp_int_int_variables, templator_cmp_int_int_variables, templator_unknown_cmp, templator_unknown_cmp},
-    {templator_unknown_cmp, templator_unknown_cmp, templator_cmp_str_str_variables, templator_cmp_str_str_variables},
-    {templator_unknown_cmp, templator_unknown_cmp, templator_cmp_str_str_variables, templator_cmp_str_str_variables},
+const TemplatorCmpValues VAR_CMPS[4][4] = {
+    {templator_cmp_int_int_values, templator_cmp_int_int_values, templator_unknown_cmp, templator_unknown_cmp},
+    {templator_cmp_int_int_values, templator_cmp_int_int_values, templator_unknown_cmp, templator_unknown_cmp},
+    {templator_unknown_cmp, templator_unknown_cmp, templator_cmp_str_str_values, templator_cmp_str_str_values},
+    {templator_unknown_cmp, templator_unknown_cmp, templator_cmp_str_str_values, templator_cmp_str_str_values},
 }; 
 
 
-int templator_compare_variables(TemplatorVariable* a, TemplatorVariable* b) {
-    TemplatorCmpVariables func = VAR_CMPS[a->type][b->type];
+int templator_compare_values(TemplatorValue* a, TemplatorValue* b) {
+    TemplatorCmpValues func = VAR_CMPS[a->type][b->type];
     return func(a, b);
 }
 
@@ -74,9 +74,9 @@ int templator_comparison_parse(TemplatorComparison* comparison, TemplatorParser*
             buffer[lhsToken.len] = 0;
             intmax_t val;
             sscanf(buffer, "%"SCNdMAX, &val);
-            comparison->lhs.local.type = TEMPLATOR_VARIABLE_TYPE_INT;
+            comparison->lhs.local.type = TEMPLATOR_VALUE_TYPE_INT;
             comparison->lhs.local.i = val;
-            comparison->lhsType = TEMPLATOR_SIDE_COMPARISON_TYPE_LOCAL_VARIABLE;
+            comparison->lhsType = TEMPLATOR_SIDE_COMPARISON_TYPE_LOCAL_VALUE;
         }
         break;
         default:
@@ -118,9 +118,9 @@ int templator_comparison_parse(TemplatorComparison* comparison, TemplatorParser*
             buffer[rhsToken.len] = 0;
             intmax_t val;
             sscanf(buffer, "%"SCNdMAX, &val);
-            comparison->rhs.local.type = TEMPLATOR_VARIABLE_TYPE_INT;
+            comparison->rhs.local.type = TEMPLATOR_VALUE_TYPE_INT;
             comparison->rhs.local.i = val;
-            comparison->rhsType = TEMPLATOR_SIDE_COMPARISON_TYPE_LOCAL_VARIABLE;
+            comparison->rhsType = TEMPLATOR_SIDE_COMPARISON_TYPE_LOCAL_VALUE;
         }
         break;
         default:
@@ -209,8 +209,8 @@ int templator_comparison_chain_eval(TemplatorComparisonChain* compChain, Templat
 }
 
 int templator_comparison_eval(TemplatorComparison* comparison, TemplatorTemplate* templ, TemplatorVariables* variables) {
-    TemplatorVariable* lhs;
-    TemplatorVariable* rhs;
+    TemplatorValue* lhs;
+    TemplatorValue* rhs;
     switch (comparison->op) {
         case TEMPLATOR_COMPARISON_OPERATOR_CHAIN_EVAL:
             return templator_comparison_chain_eval(comparison->lhs.chain, templ, variables);
@@ -219,7 +219,7 @@ int templator_comparison_eval(TemplatorComparison* comparison, TemplatorTemplate
             if (lhs == NULL) {
                 return TEMPLATOR_VARIABLE_NOT_SET;
             }
-            return templator_is_variable_truthy(lhs);
+            return templator_is_value_truthy(lhs);
         default:
             lhs = templator_comparison_get_lhs(comparison, templ, variables);
             if (lhs == NULL) {
@@ -230,7 +230,7 @@ int templator_comparison_eval(TemplatorComparison* comparison, TemplatorTemplate
                 return TEMPLATOR_VARIABLE_NOT_SET;
             }
 
-            int res = templator_compare_variables(lhs, rhs);
+            int res = templator_compare_values(lhs, rhs);
             if (res >= -1 && res <= 1) {
                 return templator_is_comparison_result_ok(comparison->op, res);
             }
@@ -277,9 +277,9 @@ int templator_comparison_chain_validate_operator(char* data, size_t len) {
     return 0;
 }
 
-TemplatorVariable* templator_comparison_get_lhs(TemplatorComparison* comparison, TemplatorTemplate* templ, TemplatorVariables* variables) {
+TemplatorValue* templator_comparison_get_lhs(TemplatorComparison* comparison, TemplatorTemplate* templ, TemplatorVariables* variables) {
     switch (comparison->lhsType) {
-        case TEMPLATOR_SIDE_COMPARISON_TYPE_LOCAL_VARIABLE:
+        case TEMPLATOR_SIDE_COMPARISON_TYPE_LOCAL_VALUE:
             return &comparison->lhs.local;
         case TEMPLATOR_SIDE_COMPARISON_TYPE_VARIABLE_REFERENCE: {
             char * variableName = templ->variables[comparison->lhs.variableIndex];
@@ -291,9 +291,9 @@ TemplatorVariable* templator_comparison_get_lhs(TemplatorComparison* comparison,
     return NULL;
 }
 
-TemplatorVariable* templator_comparison_get_rhs(TemplatorComparison* comparison, TemplatorTemplate* templ, TemplatorVariables* variables) {
+TemplatorValue* templator_comparison_get_rhs(TemplatorComparison* comparison, TemplatorTemplate* templ, TemplatorVariables* variables) {
     switch (comparison->rhsType) {
-        case TEMPLATOR_SIDE_COMPARISON_TYPE_LOCAL_VARIABLE:
+        case TEMPLATOR_SIDE_COMPARISON_TYPE_LOCAL_VALUE:
             return &comparison->rhs.local;
         case TEMPLATOR_SIDE_COMPARISON_TYPE_VARIABLE_REFERENCE: {
             char * variableName = templ->variables[comparison->rhs.variableIndex];

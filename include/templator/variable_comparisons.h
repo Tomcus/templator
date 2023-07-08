@@ -7,11 +7,11 @@
 extern "C" {
 #endif
 
-typedef int(* TemplatorCmpVariables)(TemplatorVariable*, TemplatorVariable*);
+typedef int(* TemplatorCmpValues)(TemplatorValue*, TemplatorValue*);
 
-int templator_cmp_int_int_variables(TemplatorVariable* a, TemplatorVariable* b);
-int templator_cmp_str_str_variables(TemplatorVariable* a, TemplatorVariable* b);
-int templator_unknown_cmp(TemplatorVariable* a, TemplatorVariable* b);
+int templator_cmp_int_int_values(TemplatorValue* a, TemplatorValue* b);
+int templator_cmp_str_str_values(TemplatorValue* a, TemplatorValue* b);
+int templator_unknown_cmp(TemplatorValue* a, TemplatorValue* b);
 
 #ifdef __cplusplus
 }

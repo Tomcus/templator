@@ -9,11 +9,11 @@ extern "C" {
 #endif
 
 typedef enum {
-    TEMPLATOR_VARIABLE_TYPE_INT = 0,
-    TEMPLATOR_VARIABLE_TYPE_UINT = 1,
-    TEMPLATOR_VARIABLE_TYPE_CSTR_REF = 2,
-    TEMPLATOR_VARIABLE_TYPE_CSTR_OWN = 3
-} TEMPLATOR_VARIABLE_TYPE;
+    TEMPLATOR_VALUE_TYPE_INT = 0,
+    TEMPLATOR_VALUE_TYPE_UINT = 1,
+    TEMPLATOR_VALUE_TYPE_CSTR_REF = 2,
+    TEMPLATOR_VALUE_TYPE_CSTR_OWN = 3
+} TEMPLATOR_VALUE_TYPE;
 
 typedef struct {
     const char* name;
@@ -25,8 +25,8 @@ typedef struct {
             size_t len;
         } s;
     };
-    TEMPLATOR_VARIABLE_TYPE type;
-} TemplatorVariable;
+    TEMPLATOR_VALUE_TYPE type;
+} TemplatorValue;
 
 
 #ifdef __cplusplus

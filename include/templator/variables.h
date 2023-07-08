@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
 typedef struct {
-    TemplatorVariable* data;
+    TemplatorValue* data;
     size_t cap;
     size_t len;
 } TemplatorVariables; 
@@ -29,7 +29,7 @@ void templator_variables_set_int_variable(TemplatorVariables* variables, const c
 void templator_variables_clear_variables(TemplatorVariables* variables);
 void templator_variables_remove_variable(TemplatorVariables* variables, const char* name);
 
-TemplatorVariable* templator_variables_get_variable(TemplatorVariables* variables, const char* name);
+TemplatorValue* templator_variables_get_variable(TemplatorVariables* variables, const char* name);
 
 #ifdef __cplusplus
 }

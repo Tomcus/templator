@@ -5,7 +5,7 @@
 #define VARIABLES_INITIAL_SIZE 10
 
 void templator_variables_init(TemplatorVariables* variables) {
-    variables->data = malloc(sizeof(TemplatorVariable) * VARIABLES_INITIAL_SIZE);
+    variables->data = malloc(sizeof(TemplatorValue) * VARIABLES_INITIAL_SIZE);
     variables->cap = VARIABLES_INITIAL_SIZE;
     variables->len = 0;
 }
@@ -15,13 +15,13 @@ void templator_variables_free(TemplatorVariables* variables) {
 }
 
 #define VARIABLE_FREE(var) \
-    if (var->type == TEMPLATOR_VARIABLE_TYPE_CSTR_OWN && var->s.data != NULL) { \
+    if (var->type == TEMPLATOR_VALUE_TYPE_CSTR_OWN && var->s.data != NULL) { \
         free(var->s.data); \
     } \
 
 void variables_resize(TemplatorVariables* variables) {
     size_t newSize = variables->cap * 2;
-    variables->data = realloc(variables->data, sizeof(TemplatorVariable) * newSize);
+    variables->data = realloc(variables->data, sizeof(TemplatorValue) * newSize);
     variables->cap = newSize;
 }
 
@@ -31,33 +31,33 @@ void variables_resize(TemplatorVariables* variables) {
     }
 
 void templator_variables_set_int_variable(TemplatorVariables* variables, const char* name, intmax_t value) {
-    TemplatorVariable* var = templator_variables_get_variable(variables, name);
+    TemplatorValue* var = templator_variables_get_variable(variables, name);
     if (var == NULL) {
         CHECK_RESIZE_VARIABLES;
         var = &variables->data[variables->len];
         var->name = name;
-        var->type = TEMPLATOR_VARIABLE_TYPE_INT;
+        var->type = TEMPLATOR_VALUE_TYPE_INT;
         var->i = value;
         variables->len++;
     } else {
         VARIABLE_FREE(var);
-        var->type = TEMPLATOR_VARIABLE_TYPE_INT;
+        var->type = TEMPLATOR_VALUE_TYPE_INT;
         var->i = value;
     }
 }
 
 void templator_variables_set_uint_variable(TemplatorVariables* variables, const char* name, uintmax_t value) {
-    TemplatorVariable* var = templator_variables_get_variable(variables, name);
+    TemplatorValue* var = templator_variables_get_variable(variables, name);
     if (var == NULL) {
         CHECK_RESIZE_VARIABLES;
         var = &variables->data[variables->len];
         var->name = name;
-        var->type = TEMPLATOR_VARIABLE_TYPE_UINT;
+        var->type = TEMPLATOR_VALUE_TYPE_UINT;
         var->u = value;
         variables->len++;
     } else {
         VARIABLE_FREE(var);
-        var->type = TEMPLATOR_VARIABLE_TYPE_UINT;
+        var->type = TEMPLATOR_VALUE_TYPE_UINT;
         var->u = value;
     }
 }
@@ -74,17 +74,17 @@ void templator_variables_set_uint_variable(TemplatorVariables* variables, const 
     dst.data = src;
 
 void templator_variables_set_str_variable(TemplatorVariables* variables, const char* name, char* value, size_t valueLen) {
-    TemplatorVariable* var = templator_variables_get_variable(variables, name);
+    TemplatorValue* var = templator_variables_get_variable(variables, name);
     if (var == NULL) {
         CHECK_RESIZE_VARIABLES;
         var = &variables->data[variables->len];
         var->name = name;
-        var->type = TEMPLATOR_VARIABLE_TYPE_CSTR_REF;
+        var->type = TEMPLATOR_VALUE_TYPE_CSTR_REF;
         STR_ASSIGN(var->s, value, valueLen);
         variables->len++;
     } else {
         VARIABLE_FREE(var);
-        var->type = TEMPLATOR_VARIABLE_TYPE_CSTR_REF;
+        var->type = TEMPLATOR_VALUE_TYPE_CSTR_REF;
         STR_ASSIGN(var->s, value, valueLen);
     }
 }
@@ -97,24 +97,24 @@ void templator_variables_set_str_variable(TemplatorVariables* variables, const c
     dst.data[len] = 0;
 
 void templator_variables_set_cpy_str_variable(TemplatorVariables* variables, const char* name, char* value, size_t valueLen) {
-    TemplatorVariable* var = templator_variables_get_variable(variables, name);
+    TemplatorValue* var = templator_variables_get_variable(variables, name);
     if (var == NULL) {
         CHECK_RESIZE_VARIABLES;
         var = &variables->data[variables->len];
         var->name = name;
-        var->type = TEMPLATOR_VARIABLE_TYPE_CSTR_OWN;
+        var->type = TEMPLATOR_VALUE_TYPE_CSTR_OWN;
         STR_ASSIGN(var->s, value, valueLen);
         variables->len++;
     } else {
         VARIABLE_FREE(var);
-        var->type = TEMPLATOR_VARIABLE_TYPE_CSTR_OWN;
+        var->type = TEMPLATOR_VALUE_TYPE_CSTR_OWN;
         STR_ASSIGN(var->s, value, valueLen);
     }
 }
 
 void templator_variables_clear_variables(TemplatorVariables* variables) {
     for (size_t i = 0; i < variables->len; ++i) {
-        TemplatorVariable* var = &variables->data[i];
+        TemplatorValue* var = &variables->data[i];
         VARIABLE_FREE(var);
     }
     variables->len = 0;
@@ -123,7 +123,7 @@ void templator_variables_clear_variables(TemplatorVariables* variables) {
 void templator_variables_remove_variable(TemplatorVariables* variables, const char* name) {
     size_t i = 0;
     for (; i < variables->len; ++i) {
-        TemplatorVariable* var = &variables->data[i];
+        TemplatorValue* var = &variables->data[i];
         if (strcmp(name, var->name) == 0) {
             VARIABLE_FREE(var);
             variables->len -= 1;
@@ -135,9 +135,9 @@ void templator_variables_remove_variable(TemplatorVariables* variables, const ch
     }
 }
 
-TemplatorVariable* templator_variables_get_variable(TemplatorVariables* variables, const char* name) {
+TemplatorValue* templator_variables_get_variable(TemplatorVariables* variables, const char* name) {
     for (size_t i = 0; i < variables->len; ++i) {
-        TemplatorVariable* var = &variables->data[i];
+        TemplatorValue* var = &variables->data[i];
         if (strcmp(var->name, name) == 0) {
             return var;
         }
