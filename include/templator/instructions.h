@@ -30,7 +30,7 @@ typedef struct {
 
 void templator_insert_text_instruction_init(TemplatorInstruction* instruction, char* data, size_t len);
 void templator_insert_variable_instruction_init(TemplatorInstruction* instruction, size_t nameIndex);
-void templator_insert_conditional_subtemplate(TemplatorInstruction* TemplatorInstruction, struct TTemplate subTemplate, ComparisonChain comparison);
+void templator_insert_conditional_subtemplate(TemplatorInstruction* TemplatorInstruction, struct TTemplate subTemplate, TemplatorComparisonChain comparison);
 
 void templator_instruction_free(TemplatorInstruction* instruction);
 

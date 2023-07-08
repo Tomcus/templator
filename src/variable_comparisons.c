@@ -6,22 +6,22 @@
 int variables_cmp_int_int(Variable* a, Variable* b) {
     intmax_t diff = a->i - b->i;
     if (diff == 0) {
-        return EQ;
+        return TEMPLATOR_COMPARISON_RESULT_EQ;
     } else if (diff < 0) {
-        return LT;
+        return TEMPLATOR_COMPARISON_RESULT_LT;
     } else {
-        return GT;
+        return TEMPLATOR_COMPARISON_RESULT_GT;
     }
 }
 
 int variables_cmp_str_str(Variable* a, Variable* b) {
     int res = strncmp(a->s.data, b->s.data, (a->s.len > b->s.len) ? a->s.len: b->s.len);
     if (res == 0) {
-        return EQ;
+        return TEMPLATOR_COMPARISON_RESULT_EQ;
     } else if (res < 0) {
-        return LT;
+        return TEMPLATOR_COMPARISON_RESULT_LT;
     } else {
-        return GT;
+        return TEMPLATOR_COMPARISON_RESULT_GT;
     }
 }
 

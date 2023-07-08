@@ -77,8 +77,8 @@ int template_parse_instruction(Template* template, Parser commandParser, Parser*
             if (nextToken.type != PAREN_OPEN) {
                 return TEMPLATOR_UNABLE_TO_PARSE_INSTRUCTION;
             }
-            ComparisonChain cc;
-            int res = comparison_chain_parse(&cc, &commandParser, template);
+            TemplatorComparisonChain cc;
+            int res = templator_comparison_chain_parse(&cc, &commandParser, template);
             if (res < 0) {
                 return res;
             }

@@ -118,7 +118,7 @@ int templator_run(const Templator* templator, Template* template, Variables* var
             }
             break;
             case TEMPLATOR_INSTRUCTION_TYPE_INSERT_CONDITIONAL_SUBTEMPLATE: {
-                int res = comparison_chain_eval(&ins->conditionalInsertTextData.chain, template, variables);
+                int res = templator_comparison_chain_eval(&ins->conditionalInsertTextData.chain, template, variables);
                 if (res < 0) {
                     return res;
                 }
