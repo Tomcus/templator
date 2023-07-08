@@ -1,12 +1,12 @@
 #include "templator/parser.h"
 
-void parser_init(Parser* parser, char* data, size_t len) {
+void templator_parser_init(TemplatorParser* parser, char* data, size_t len) {
     parser->data = data;
     parser->len = len;
 }
 
-Parser parser_read_while_str(Parser* parser, validateStr validator, bool skipEscaped) {
-    Parser res = *parser;
+TemplatorParser templator_parser_read_while_str(TemplatorParser* parser, validateStr validator, bool skipEscaped) {
+    TemplatorParser res = *parser;
     bool escaped = false;
     res.len = 0;
 
@@ -34,8 +34,8 @@ Parser parser_read_while_str(Parser* parser, validateStr validator, bool skipEsc
     return res;
 }
 
-Parser parser_read_until_str(Parser* parser, validateStr validator, bool skipEscaped) {
-    Parser res = *parser;
+TemplatorParser templator_parser_read_until_str(TemplatorParser* parser, validateStr validator, bool skipEscaped) {
+    TemplatorParser res = *parser;
     bool escaped = false;
     res.len = 0;
 
@@ -63,8 +63,8 @@ Parser parser_read_until_str(Parser* parser, validateStr validator, bool skipEsc
     return res;
 }
 
-Parser parser_read_while_char(Parser* parser, validateChar validator, bool skipEscaped) {
-    Parser res = *parser;
+TemplatorParser templator_parser_read_while_char(TemplatorParser* parser, validateChar validator, bool skipEscaped) {
+    TemplatorParser res = *parser;
     bool escaped = false;
     res.len = 0;
 
@@ -92,8 +92,8 @@ Parser parser_read_while_char(Parser* parser, validateChar validator, bool skipE
     return res;
 }
 
-Parser parser_read_until_char(Parser* parser, validateChar validator, bool skipEscaped) {
-    Parser res = *parser;
+TemplatorParser templator_parser_read_until_char(TemplatorParser* parser, validateChar validator, bool skipEscaped) {
+    TemplatorParser res = *parser;
     bool escaped = false;
     res.len = 0;
 
@@ -121,25 +121,25 @@ Parser parser_read_until_char(Parser* parser, validateChar validator, bool skipE
     return res;
 }
 
-void parser_skip(Parser* parser, size_t count) {
+void templator_parser_skip(TemplatorParser* parser, size_t count) {
     count = (count <= parser->len) ? count : parser->len;
     parser->data += count;
     parser->len -= count;
 }
 
-void parser_skip_while(Parser* parser, validateChar validator) {
+void templator_parser_skip_while(TemplatorParser* parser, validateChar validator) {
     while(parser->len > 0 && validator(parser->data[0])) {
-        parser_skip(parser, 1);
+        templator_parser_skip(parser, 1);
     }
 }
 
-void parser_skip_from_end(Parser* parser, size_t count) {
+void templator_parser_skip_from_end(TemplatorParser* parser, size_t count) {
     count = (count <= parser->len) ? count : parser->len;
     parser->len -= count;
 }
 
-void parser_skip_while_from_end(Parser* parser, validateChar validator) {
+void templator_parser_skip_while_from_end(TemplatorParser* parser, validateChar validator) {
     while(parser->len > 0 && validator(parser->data[parser->len - 1])) {
-        parser_skip_from_end(parser, 1);
+        templator_parser_skip_from_end(parser, 1);
     }
 }

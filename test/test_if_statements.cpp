@@ -48,7 +48,7 @@ TEST_CASE("Test invalid parsing", "[templating]") {
     Template templ;
 
     for (auto& str: testData) {
-        Parser parser;
+        TemplatorParser parser;
         parser.data = str.data();
         parser.len = str.size();
         int res = template_parse(&templ, &parser);

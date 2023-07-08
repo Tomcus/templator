@@ -18,7 +18,7 @@ int template_is_closing_bracket(char* data, size_t len) {
     return strncmp(data, "%}", (len >= 2) ? 2 : len) == 0;
 }
 
-int template_parse(Template* template, Parser* parser) {
+int template_parse(Template* template, TemplatorParser* parser) {
     template->instructions = malloc(INITIAL_INSTRUCTIONS_CAPACITY * sizeof(TemplatorInstruction));
     template->instructionsCnt = 0;
     template->instructionsCap = INITIAL_INSTRUCTIONS_CAPACITY;
@@ -26,23 +26,23 @@ int template_parse(Template* template, Parser* parser) {
     template->variablesCnt = 0;
     template->variablesCap = INITIAL_VARIABLES_CAPACITY;
 
-    Parser parsed = parser_read_until_str(parser, template_is_opening_bracket, true); 
+    TemplatorParser parsed = templator_parser_read_until_str(parser, template_is_opening_bracket, true); 
     while (parsed.data != NULL) {
         if (parsed.len > 0) {
             TemplatorInstruction* ins = template_add_instruction(template);
             templator_insert_text_instruction_init(ins, parsed.data, parsed.len);
         }
-        parser_skip(parser, 2);
-        parsed = parser_read_until_str(parser, template_is_closing_bracket, true);
+        templator_parser_skip(parser, 2);
+        parsed = templator_parser_read_until_str(parser, template_is_closing_bracket, true);
         if (parsed.data == NULL) {
             return TEMPLATOR_INCOMPLETE_INSTRUCTION_BRACKETS;
         }
-        parser_skip(parser, 2);
+        templator_parser_skip(parser, 2);
         int res = template_parse_instruction(template, parsed, parser);
         if (res < 0) {
             return res;
         }
-        parsed = parser_read_until_str(parser, template_is_opening_bracket, true);
+        parsed = templator_parser_read_until_str(parser, template_is_opening_bracket, true);
     }
 
     if (parser->len > 0) {
@@ -53,12 +53,12 @@ int template_parse(Template* template, Parser* parser) {
     return 0;
 }
 
-int template_parse_instruction(Template* template, Parser commandParser, Parser* afterCommandParser) {
-    Token tok = templator_parser_next_token(&commandParser);
+int template_parse_instruction(Template* template, TemplatorParser commandTemplatorParser, TemplatorParser* afterCommandTemplatorParser) {
+    Token tok = templator_parser_next_token(&commandTemplatorParser);
     if (tok.type == NONE) {
         return TEMPLATOR_NO_INSTRUCTION_IN_BRACKETS;
     }
-    Token nextToken = templator_parser_next_token(&commandParser);
+    Token nextToken = templator_parser_next_token(&commandTemplatorParser);
     if (tok.type == KEYWORD_ENDIF && nextToken.type == NONE) {
         return TEMPLATOR_PARSING_ENDED_WITH_ENDIF;
     }
@@ -78,12 +78,12 @@ int template_parse_instruction(Template* template, Parser commandParser, Parser*
                 return TEMPLATOR_UNABLE_TO_PARSE_INSTRUCTION;
             }
             TemplatorComparisonChain cc;
-            int res = templator_comparison_chain_parse(&cc, &commandParser, template);
+            int res = templator_comparison_chain_parse(&cc, &commandTemplatorParser, template);
             if (res < 0) {
                 return res;
             }
             Template subTemplate;
-            res = template_parse(&subTemplate, afterCommandParser);
+            res = template_parse(&subTemplate, afterCommandTemplatorParser);
             if (res != TEMPLATOR_PARSING_ENDED_WITH_ENDIF) {
                 if (res == 0) {
                     return TEMPLATOR_PARSING_DIDNT_END_WITH_ENDIF;

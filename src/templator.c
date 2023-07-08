@@ -34,8 +34,8 @@ int templator_add_named_template(Templator* templator, const char* name, char* d
     NameAndTemplatePair* nameAndTemplate = &templator->templates[templator->templatesCnt];
     
     nameAndTemplate->name = name;
-    Parser parser;
-    parser_init(&parser, data, len);
+    TemplatorParser parser;
+    templator_parser_init(&parser, data, len);
     int res = template_parse(&nameAndTemplate->templ, &parser);
     if (res < 0) {
         return res;
@@ -66,8 +66,8 @@ int templator_run_named(const Templator* templator, const char* name, Variables*
 
 int templator_run_external(const Templator* templator, char* templateData, size_t templateLen, Variables* variables, void* data, AppendFunction appendFunction) {
     Template template;
-    Parser parser;
-    parser_init(&parser, templateData, templateLen);
+    TemplatorParser parser;
+    templator_parser_init(&parser, templateData, templateLen);
     int res = template_parse(&template, &parser);
 
     if (res < 0) {

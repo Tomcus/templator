@@ -21,7 +21,7 @@ TEST_CASE("Test parsing basic commands", "[parsing][tokenization]") {
     };
 
     for (auto& [command, expected_tokens]: data) {
-        Parser parser;
+        TemplatorParser parser;
         parser.data = (char *)command.data();
         parser.len = command.size();
         for (const auto token: expected_tokens) {

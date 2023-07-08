@@ -67,8 +67,8 @@ bool templator_is_variable_truthy(Variable* var);
 bool templator_is_comparison_result_ok(TEMPLATOR_COMPARISON_OPERATOR op, TEMPLATOR_COMPARISON_RESULT res);
 int templator_compare_variables(Variable* a, Variable* b);
 
-int templator_comparison_chain_parse(TemplatorComparisonChain* compChain, Parser* parser, struct TTemplate* templ);
-int templator_comparison_parse(TemplatorComparison* comparison, Parser* parser, struct TTemplate* templ);
+int templator_comparison_chain_parse(TemplatorComparisonChain* compChain, TemplatorParser* parser, struct TTemplate* templ);
+int templator_comparison_parse(TemplatorComparison* comparison, TemplatorParser* parser, struct TTemplate* templ);
 int templator_comparison_chain_validate_operator(char* data, size_t len);
 int templator_comparison_chain_eval(TemplatorComparisonChain* compChain, struct TTemplate* templ, Variables* variables);
 int templator_comparison_operator_validate(char* data, size_t len);

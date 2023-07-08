@@ -50,7 +50,7 @@ int templator_compare_variables(Variable* a, Variable* b) {
     return func(a, b);
 }
 
-int templator_comparison_parse(TemplatorComparison* comparison, Parser* parser, Template* templ) {
+int templator_comparison_parse(TemplatorComparison* comparison, TemplatorParser* parser, Template* templ) {
     Token lhsToken = templator_parser_next_token(parser);
     switch(lhsToken.type) {
         case PAREN_OPEN: {
@@ -129,7 +129,7 @@ int templator_comparison_parse(TemplatorComparison* comparison, Parser* parser, 
     return 0;
 }
 
-int templator_comparison_chain_parse(TemplatorComparisonChain* compChain, Parser* parser, Template* templ) {
+int templator_comparison_chain_parse(TemplatorComparisonChain* compChain, TemplatorParser* parser, Template* templ) {
     compChain->next = NULL;
     TemplatorComparisonChain* curr = compChain;
 

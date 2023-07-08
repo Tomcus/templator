@@ -14,19 +14,19 @@ typedef int(*validateStr)(char*, size_t);
 typedef struct {
     char* data;
     size_t len;
-} Parser;
+} TemplatorParser;
 
-void parser_init(Parser* parser, char* data, size_t len);
+void templator_parser_init(TemplatorParser* parser, char* data, size_t len);
 
-Parser parser_read_until_str(Parser* parser, validateStr validator, bool skipEscaped);
-Parser parser_read_while_str(Parser* parser, validateStr validator, bool skipEscaped);
-Parser parser_read_until_char(Parser* parser, validateChar validator, bool skipEscaped);
-Parser parser_read_while_char(Parser* parser, validateChar validator, bool skipEscaped);
+TemplatorParser templator_parser_read_until_str(TemplatorParser* parser, validateStr validator, bool skipEscaped);
+TemplatorParser templator_parser_read_while_str(TemplatorParser* parser, validateStr validator, bool skipEscaped);
+TemplatorParser templator_parser_read_until_char(TemplatorParser* parser, validateChar validator, bool skipEscaped);
+TemplatorParser templator_parser_read_while_char(TemplatorParser* parser, validateChar validator, bool skipEscaped);
 
-void parser_skip(Parser* parser, size_t count);
-void parser_skip_from_end(Parser* parser, size_t count);
-void parser_skip_while(Parser* parser, validateChar validator);
-void parser_skip_while_from_end(Parser* parser, validateChar validator);
+void templator_parser_skip(TemplatorParser* parser, size_t count);
+void templator_parser_skip_from_end(TemplatorParser* parser, size_t count);
+void templator_parser_skip_while(TemplatorParser* parser, validateChar validator);
+void templator_parser_skip_while_from_end(TemplatorParser* parser, validateChar validator);
 
 #ifdef __cplusplus
 }

@@ -17,8 +17,8 @@ typedef struct TTemplate {
     size_t variablesCap;
 } Template;
 
-int template_parse(Template* templ, Parser* parser);
-int template_parse_instruction(Template* temp, Parser commandParser, Parser* afterCommandParser);
+int template_parse(Template* templ, TemplatorParser* parser);
+int template_parse_instruction(Template* temp, TemplatorParser commandTemplatorParser, TemplatorParser* afterCommandTemplatorParser);
 void template_free(Template* templ);
 
 TemplatorInstruction* template_add_instruction(Template* templ);
