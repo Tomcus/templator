@@ -37,16 +37,16 @@ bool templator_is_comparison_result_ok(TEMPLATOR_COMPARISON_OPERATOR op, TEMPLAT
     return false;
 }
 
-const cmpFunction VAR_CMPS[4][4] = {
-    {variables_cmp_int_int, variables_cmp_int_int, unknown_cmp, unknown_cmp},
-    {variables_cmp_int_int, variables_cmp_int_int, unknown_cmp, unknown_cmp},
-    {unknown_cmp, unknown_cmp, variables_cmp_str_str, variables_cmp_str_str},
-    {unknown_cmp, unknown_cmp, variables_cmp_str_str, variables_cmp_str_str},
+const TemplatorCmpVariables VAR_CMPS[4][4] = {
+    {templator_cmp_int_int_variables, templator_cmp_int_int_variables, templator_unknown_cmp, templator_unknown_cmp},
+    {templator_cmp_int_int_variables, templator_cmp_int_int_variables, templator_unknown_cmp, templator_unknown_cmp},
+    {templator_unknown_cmp, templator_unknown_cmp, templator_cmp_str_str_variables, templator_cmp_str_str_variables},
+    {templator_unknown_cmp, templator_unknown_cmp, templator_cmp_str_str_variables, templator_cmp_str_str_variables},
 }; 
 
 
 int templator_compare_variables(Variable* a, Variable* b) {
-    cmpFunction func = VAR_CMPS[a->type][b->type];
+    TemplatorCmpVariables func = VAR_CMPS[a->type][b->type];
     return func(a, b);
 }
 
