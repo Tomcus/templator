@@ -32,9 +32,9 @@ TemplatorTemplate* templator_get_template_by_name(const Templator* templator, co
 
 typedef void(*TemplatorAppendStrFunction)(void*, const char*, size_t);
 
-int templator_run(const Templator* templator, TemplatorTemplate* templ, Variables* variables, void* data, TemplatorAppendStrFunction appendFunction);
-int templator_run_named(const Templator* templator, const char* name, Variables* variables, void* data, TemplatorAppendStrFunction appendFunction);
-int templator_run_external(const Templator* templator, char* templateData, size_t templateLen, Variables* variables, void* data, TemplatorAppendStrFunction appendFunction);
+int templator_run(const Templator* templator, TemplatorTemplate* templ, TemplatorVariables* variables, void* data, TemplatorAppendStrFunction appendFunction);
+int templator_run_named(const Templator* templator, const char* name, TemplatorVariables* variables, void* data, TemplatorAppendStrFunction appendFunction);
+int templator_run_external(const Templator* templator, char* templateData, size_t templateLen, TemplatorVariables* variables, void* data, TemplatorAppendStrFunction appendFunction);
 
 #ifdef __cplusplus
 }

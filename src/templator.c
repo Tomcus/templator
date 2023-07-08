@@ -55,7 +55,7 @@ TemplatorTemplate* templator_get_template_by_name(const Templator* templator, co
     return NULL;
 }
 
-int templator_run_named(const Templator* templator, const char* name, Variables* variables, void* data, TemplatorAppendStrFunction appendFunction) {
+int templator_run_named(const Templator* templator, const char* name, TemplatorVariables* variables, void* data, TemplatorAppendStrFunction appendFunction) {
     TemplatorTemplate* template = templator_get_template_by_name(templator, name);
     
     if (template != NULL) {
@@ -64,7 +64,7 @@ int templator_run_named(const Templator* templator, const char* name, Variables*
     return -1;
 }
 
-int templator_run_external(const Templator* templator, char* templateData, size_t templateLen, Variables* variables, void* data, TemplatorAppendStrFunction appendFunction) {
+int templator_run_external(const Templator* templator, char* templateData, size_t templateLen, TemplatorVariables* variables, void* data, TemplatorAppendStrFunction appendFunction) {
     TemplatorTemplate template;
     TemplatorParser parser;
     templator_parser_init(&parser, templateData, templateLen);
@@ -81,7 +81,7 @@ int templator_run_external(const Templator* templator, char* templateData, size_
     return res;
 }
 
-int templator_run(const Templator* templator, TemplatorTemplate* template, Variables* variables, void* data, TemplatorAppendStrFunction appendFunction) {
+int templator_run(const Templator* templator, TemplatorTemplate* template, TemplatorVariables* variables, void* data, TemplatorAppendStrFunction appendFunction) {
     char buffer[TEMPLATOR_BUFFER_SIZE];
     for (size_t i = 0; i < template->instructionsCnt; ++i) {
         buffer[0] = 0;
@@ -93,23 +93,23 @@ int templator_run(const Templator* templator, TemplatorTemplate* template, Varia
             case TEMPLATOR_INSTRUCTION_TYPE_INSERT_VARIABLE_VALUE: {
                 size_t variableNameIndex = ins->insertVariableData.nameIndex;
                 char* variableName = template->variables[variableNameIndex];
-                Variable* var = variables_get_variable(variables, variableName);
+                TemplatorVariable* var = templator_variables_get_variable(variables, variableName);
 
                 if (var == NULL) {
                     return TEMPLATOR_VARIABLE_NOT_SET;
                 }
 
                 switch (var->type) {
-                    case VARIABLE_CSTR_REF:
-                    case VARIABLE_CSTR_OWN:
+                    case TEMPLATOR_VARIABLE_TYPE_CSTR_REF:
+                    case TEMPLATOR_VARIABLE_TYPE_CSTR_OWN:
                         appendFunction(data, var->s.data, var->s.len);
                     break;
-                    case VARIABLE_INT: {
+                    case TEMPLATOR_VARIABLE_TYPE_INT: {
                         int len = snprintf(buffer, sizeof(var->i), "%"PRIdMAX, var->i);
                         appendFunction(data, buffer, (size_t)len);
                     }
                     break;
-                    case VARIABLE_UINT: {
+                    case TEMPLATOR_VARIABLE_TYPE_UINT: {
                         int len = snprintf(buffer, sizeof(var->i), "%"PRIuMAX, var->u);
                         appendFunction(data, buffer, (size_t)len);
                     }

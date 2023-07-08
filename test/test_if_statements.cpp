@@ -18,22 +18,22 @@ TEST_CASE("Test if statements", "[templating]") {
     std::string str{};
     templator_init(&templator);
 
-    Variables vars;
-    variables_init(&vars);
+    TemplatorVariables vars;
+    templator_variables_init(&vars);
 
-    variables_set_int_variable(&vars, "var", 0);
+    templator_variables_set_int_variable(&vars, "var", 0);
 
     int res = templator_run_external(&templator, (char*)templateStr.c_str(), templateStr.size(), &vars, (void*)&str, append_str);
     REQUIRE(res == 0);
     REQUIRE(str == R"(var: 0,)");
     str.clear();
 
-    variables_set_int_variable(&vars, "var", 1);
+    templator_variables_set_int_variable(&vars, "var", 1);
     res = templator_run_external(&templator, (char*)templateStr.c_str(), templateStr.size(), &vars, (void*)&str, append_str);
     REQUIRE(res == 0);
     REQUIRE(str == R"(var: 1, var is one)");
 
-    variables_free(&vars);
+    templator_variables_free(&vars);
     templator_free(&templator);
 }
 
@@ -69,10 +69,10 @@ TEST_CASE("Test multiple comparisons", "[templating]") {
     Templator templator;
     templator_init(&templator);
 
-    Variables vars;
-    variables_init(&vars);
+    TemplatorVariables vars;
+    templator_variables_init(&vars);
 
-    variables_set_int_variable(&vars, "val", 1);
+    templator_variables_set_int_variable(&vars, "val", 1);
 
     for (auto& [input, expected]: testData) {
         std::string str{};
@@ -82,6 +82,6 @@ TEST_CASE("Test multiple comparisons", "[templating]") {
         REQUIRE(str == expected);
     }
 
-    variables_free(&vars);
+    templator_variables_free(&vars);
     templator_free(&templator);
 }

@@ -12,11 +12,11 @@ extern "C" {
 #endif
 
 typedef enum {
-    VARIABLE_INT = 0,
-    VARIABLE_UINT = 1,
-    VARIABLE_CSTR_REF = 2,
-    VARIABLE_CSTR_OWN = 3
-} VARIABLE_TYPE;
+    TEMPLATOR_VARIABLE_TYPE_INT = 0,
+    TEMPLATOR_VARIABLE_TYPE_UINT = 1,
+    TEMPLATOR_VARIABLE_TYPE_CSTR_REF = 2,
+    TEMPLATOR_VARIABLE_TYPE_CSTR_OWN = 3
+} TEMPLATOR_VARIABLE_TYPE;
 
 typedef struct {
     const char* name;
@@ -28,27 +28,27 @@ typedef struct {
             size_t len;
         } s;
     };
-    VARIABLE_TYPE type;
-} Variable;
+    TEMPLATOR_VARIABLE_TYPE type;
+} TemplatorVariable;
 
 typedef struct {
-    Variable* data;
+    TemplatorVariable* data;
     size_t cap;
     size_t len;
-} Variables; 
+} TemplatorVariables; 
 
-void variables_init(Variables* variables);
-void variables_free(Variables* variables);
+void templator_variables_init(TemplatorVariables* variables);
+void templator_variables_free(TemplatorVariables* variables);
 
-void variables_set_str_variable(Variables* variables, const char* name, char* value, size_t valueLen);
-void variables_set_cpy_str_variable(Variables* variables, const char* name, char* value, size_t valueLen);
-void variables_set_uint_variable(Variables* variables, const char* name, uintmax_t value);
-void variables_set_int_variable(Variables* variables, const char* name, intmax_t value);
+void templator_variables_set_str_variable(TemplatorVariables* variables, const char* name, char* value, size_t valueLen);
+void templator_variables_set_cpy_str_variable(TemplatorVariables* variables, const char* name, char* value, size_t valueLen);
+void templator_variables_set_uint_variable(TemplatorVariables* variables, const char* name, uintmax_t value);
+void templator_variables_set_int_variable(TemplatorVariables* variables, const char* name, intmax_t value);
 
-void variables_clear_variables(Variables* variables);
-void variables_remove_variable(Variables* variables, const char* name);
+void templator_variables_clear_variables(TemplatorVariables* variables);
+void templator_variables_remove_variable(TemplatorVariables* variables, const char* name);
 
-Variable* variables_get_variable(Variables* variables, const char* name);
+TemplatorVariable* templator_variables_get_variable(TemplatorVariables* variables, const char* name);
 
 #ifdef __cplusplus
 }

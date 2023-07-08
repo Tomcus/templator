@@ -32,18 +32,19 @@ TEST_CASE("Test variable insertion templating", "[templating]") {
     std::string str;
     templator_init(&templator);
 
-    Variables vars;
-    variables_init(&vars);
+    TemplatorVariables vars;
+    templator_variables_init(&vars);
 
-    variables_set_int_variable(&vars, "a", -69);
-    variables_set_uint_variable(&vars, "b", 420);
-    variables_set_cpy_str_variable(&vars, "c", (char *)"coppied text", TEMPLATOR_STR_NUL_TERMINATED);
-    variables_set_str_variable(&vars, "d", (char *)"original text", 13);
+    templator_variables_set_int_variable(&vars, "a", -69);
+    templator_variables_set_uint_variable(&vars, "b", 420);
+    templator_variables_set_cpy_str_variable(&vars, "c", (char *)"coppied text", TEMPLATOR_STR_NUL_TERMINATED);
+    templator_variables_set_str_variable(&vars, "d", (char *)"original text", 13);
 
     int res = templator_run_external(&templator, (char*)templatStr.c_str(), templatStr.size(), &vars, (void*)&str, realloc_str_and_append);
     (void)res;
     REQUIRE(res == 0);
     REQUIRE(str == "a: -69, b: 420, c: coppied text, d: original text, a: -69, b: 420, test");
+    templator_variables_free(&vars);
     templator_free(&templator);
 }
 
