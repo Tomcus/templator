@@ -6,6 +6,7 @@
 #include <inttypes.h>
 
 #define TEMPLATOR_INITIAL_TEMPLATE_CAPACITY 10
+#define TEMPLATOR_BUFFER_SIZE 1024
 
 void templator_init(Templator* templator) {
     templator->templates = malloc(sizeof(NameAndTemplatePair) * TEMPLATOR_INITIAL_TEMPLATE_CAPACITY);
@@ -20,9 +21,9 @@ void templator_free(Templator* templator) {
     free(templator->templates);
 }
 
-bool templator_add_named_template(Templator* templator, const char* name, char* data, size_t len) {
+int templator_add_named_template(Templator* templator, const char* name, char* data, size_t len) {
     if (templator_get_template_by_name(templator, name) != NULL) {
-        return false;
+        return 0;
     }
     
     if (templator->templatesCnt == templator->templatesCap) {
@@ -33,11 +34,16 @@ bool templator_add_named_template(Templator* templator, const char* name, char* 
     NameAndTemplatePair* nameAndTemplate = &templator->templates[templator->templatesCnt];
     
     nameAndTemplate->name = name;
-    template_parse(&nameAndTemplate->templ, data, len);
+    Parser parser;
+    parser_init(&parser, data, len);
+    int res = template_parse(&nameAndTemplate->templ, &parser);
+    if (res < 0) {
+        return res;
+    }
 
     templator->templatesCnt ++;
 
-    return true;
+    return 1;
 }
 
 Template* templator_get_template_by_name(const Templator* templator, const char* name) {
@@ -60,14 +66,25 @@ int templator_run_named(const Templator* templator, const char* name, Variables*
 
 int templator_run_external(const Templator* templator, char* templateData, size_t templateLen, Variables* variables, void* data, AppendFunction appendFunction) {
     Template template;
-    template_parse(&template, templateData, templateLen);
+    Parser parser;
+    parser_init(&parser, templateData, templateLen);
+    int res = template_parse(&template, &parser);
 
-    return templator_run(templator, &template, variables, data, appendFunction);
+    if (res < 0) {
+        template_free(&template);
+        return res;    
+    }
+
+    res = templator_run(templator, &template, variables, data, appendFunction);
+
+    template_free(&template);
+    return res;
 }
 
 int templator_run(const Templator* templator, Template* template, Variables* variables, void* data, AppendFunction appendFunction) {
-    (void) templator;
+    char buffer[TEMPLATOR_BUFFER_SIZE];
     for (size_t i = 0; i < template->instructionsCnt; ++i) {
+        buffer[0] = 0;
         Instruction* ins = &template->instructions[i];
         switch (ins->type) {
             case INSERT_TEXT:
@@ -88,19 +105,32 @@ int templator_run(const Templator* templator, Template* template, Variables* var
                         appendFunction(data, var->s.data, var->s.len);
                     break;
                     case VARIABLE_INT: {
-                        char buffer[sizeof(var->i)];
                         int len = snprintf(buffer, sizeof(var->i), "%"PRIdMAX, var->i);
                         appendFunction(data, buffer, (size_t)len);
                     }
                     break;
                     case VARIABLE_UINT: {
-                        char buffer[sizeof(var->i)];
                         int len = snprintf(buffer, sizeof(var->i), "%"PRIuMAX, var->u);
                         appendFunction(data, buffer, (size_t)len);
                     }
                     break;
                 }
             }
+            break;
+            case CONDITIONAL_TEXT_INSERT: {
+                int res = comparison_chain_eval(&ins->conditionalInsertTextData.chain, template, variables);
+                if (res < 0) {
+                    return res;
+                }
+                if (res) {
+                    res = templator_run(templator, ins->conditionalInsertTextData.templ, variables, data, appendFunction);
+                    if (res < 0) {
+                        return res;
+                    }
+                }
+            }
+            break;
+            case NOOP:
             break;
         }
     }

@@ -27,7 +27,7 @@ typedef struct {
 void templator_init(Templator* templator);
 void templator_free(Templator* templator);
 
-bool templator_add_named_template(Templator* templator, const char* name, char* data, size_t len);
+int templator_add_named_template(Templator* templator, const char* name, char* data, size_t len);
 Template* templator_get_template_by_name(const Templator* templator, const char* name);
 
 typedef void(*AppendFunction)(void*, const char*, size_t);

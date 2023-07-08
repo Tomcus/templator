@@ -34,7 +34,9 @@ To improve C knowledge, read "Fluent C" book, and check how to create wrappers f
 
 Features:
 
-* [ ] If statements
+* [x] If statements
+  * [ ] else
+  * [ ] elif
 * [ ] Loops
 * [ ] Template templates - inheritance with recursive insertion.
 * [ ] Functions

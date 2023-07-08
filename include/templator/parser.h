@@ -19,7 +19,9 @@ typedef struct {
 void parser_init(Parser* parser, char* data, size_t len);
 
 Parser parser_read_until_str(Parser* parser, validateStr validator, bool skipEscaped);
+Parser parser_read_while_str(Parser* parser, validateStr validator, bool skipEscaped);
 Parser parser_read_until_char(Parser* parser, validateChar validator, bool skipEscaped);
+Parser parser_read_while_char(Parser* parser, validateChar validator, bool skipEscaped);
 
 void parser_skip(Parser* parser, size_t count);
 void parser_skip_from_end(Parser* parser, size_t count);

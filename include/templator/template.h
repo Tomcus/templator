@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-typedef struct {
+typedef struct TTemplate {
     Instruction* instructions;
     size_t instructionsCnt;
     size_t instructionsCap;
@@ -17,8 +17,8 @@ typedef struct {
     size_t variablesCap;
 } Template;
 
-int template_parse(Template* templ, char* data, size_t len);
-int template_parse_instruction(Template* temp, Parser parser);
+int template_parse(Template* templ, Parser* parser);
+int template_parse_instruction(Template* temp, Parser commandParser, Parser* afterCommandParser);
 void template_free(Template* templ);
 
 Instruction* template_add_instruction(Template* templ);

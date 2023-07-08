@@ -44,5 +44,6 @@ TEST_CASE("Test variable insertion templating", "[templating]") {
     (void)res;
     REQUIRE(res == 0);
     REQUIRE(str == "a: -69, b: 420, c: coppied text, d: original text, a: -69, b: 420, test");
+    templator_free(&templator);
 }
 

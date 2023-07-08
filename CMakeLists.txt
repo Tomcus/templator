@@ -5,13 +5,17 @@ project(templator)
 find_package(Catch2 REQUIRED)
 
 add_library(templator STATIC
+    src/command_tokenizer.c
     src/error.c
+    src/instructions.c
+    src/instructions/conditional_insert_text_instruction.c
     src/instructions/insert_text_instruction.c
     src/instructions/insert_variable_instruction.c
-    src/instructions.c
+    src/logical_operations.c
     src/parser.c
     src/template.c
     src/templator.c
+    src/variable_comparisons.c
     src/variables.c
 )
 

@@ -5,6 +5,35 @@ void parser_init(Parser* parser, char* data, size_t len) {
     parser->len = len;
 }
 
+Parser parser_read_while_str(Parser* parser, validateStr validator, bool skipEscaped) {
+    Parser res = *parser;
+    bool escaped = false;
+    res.len = 0;
+
+    while (parser->len - res.len > 0) {
+        if (skipEscaped && res.data[res.len] == '\\') {
+            escaped = true;
+            continue;
+        }
+        if (escaped) {
+            escaped = false;
+            continue;
+        }
+
+        if (!validator(parser->data + res.len, parser->len - res.len)) {
+            parser->data += res.len;
+            parser->len -= res.len;
+            return res;
+        }
+
+        ++res.len;
+    }
+
+    parser->data += res.len;
+    parser->len -= res.len;
+    return res;
+}
+
 Parser parser_read_until_str(Parser* parser, validateStr validator, bool skipEscaped) {
     Parser res = *parser;
     bool escaped = false;
@@ -31,6 +60,35 @@ Parser parser_read_until_str(Parser* parser, validateStr validator, bool skipEsc
 
     res.len = 0;
     res.data = NULL;
+    return res;
+}
+
+Parser parser_read_while_char(Parser* parser, validateChar validator, bool skipEscaped) {
+    Parser res = *parser;
+    bool escaped = false;
+    res.len = 0;
+
+    while (parser->len - res.len > 0) {
+        if (skipEscaped && res.data[res.len] == '\\') {
+            escaped = true;
+            continue;
+        }
+        if (escaped) {
+            escaped = false;
+            continue;
+        }
+
+        if (!validator(parser->data[res.len])) {
+            parser->data += res.len;
+            parser->len -= res.len;
+            return res;
+        }
+
+        ++res.len;
+    }
+
+    parser->data += res.len;
+    parser->len -= res.len;
     return res;
 }
 

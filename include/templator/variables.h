@@ -12,10 +12,10 @@ extern "C" {
 #endif
 
 typedef enum {
-    VARIABLE_INT,
-    VARIABLE_UINT,
-    VARIABLE_CSTR_REF,
-    VARIABLE_CSTR_OWN
+    VARIABLE_INT = 0,
+    VARIABLE_UINT = 1,
+    VARIABLE_CSTR_REF = 2,
+    VARIABLE_CSTR_OWN = 3
 } VARIABLE_TYPE;
 
 typedef struct {
