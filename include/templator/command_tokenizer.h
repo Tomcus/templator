@@ -28,7 +28,7 @@ typedef struct {
 } Token;
 
 int templator_is_operator(int character);
-Token parser_next_token(Parser* parser);
+Token templator_parser_next_token(Parser* parser);
 Token peek_next_token(Parser parser);
 TOKEN_TYPE token_get_word_type(Parser parser);
 

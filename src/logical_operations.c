@@ -51,7 +51,7 @@ int variables_compare(Variable* a, Variable* b) {
 }
 
 int templator_comparison_parse(Comparison* comparison, Parser* parser, Template* templ) {
-    Token lhsToken = parser_next_token(parser);
+    Token lhsToken = templator_parser_next_token(parser);
     switch(lhsToken.type) {
         case PAREN_OPEN: {
             comparison->lhs.chain = malloc(sizeof(ComparisonChain));
@@ -97,7 +97,7 @@ int templator_comparison_parse(Comparison* comparison, Parser* parser, Template*
                 }
                 return res;
             }
-            parser_next_token(parser);
+            templator_parser_next_token(parser);
             comparison->op = (COMPARISON_OPERATOR)res;
         }
         break;
@@ -105,7 +105,7 @@ int templator_comparison_parse(Comparison* comparison, Parser* parser, Template*
             return TEMPLATOR_UNEXPECTED_TOKEN;
     }
 
-    Token rhsToken = parser_next_token(parser);
+    Token rhsToken = templator_parser_next_token(parser);
     switch (rhsToken.type) {
         case WORD: {
             comparison->rhs.variableIndex = template_try_insert_variable(templ, rhsToken.data, rhsToken.len);
@@ -141,7 +141,7 @@ int comparison_chain_parse(ComparisonChain* compChain, Parser* parser, Template*
             return res;
         }
 
-        Token opToken = parser_next_token(parser);
+        Token opToken = templator_parser_next_token(parser);
         switch (opToken.type) {
             case PAREN_CLOSE:
                 killLoop = true;

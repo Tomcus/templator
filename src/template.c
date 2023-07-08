@@ -54,11 +54,11 @@ int template_parse(Template* template, Parser* parser) {
 }
 
 int template_parse_instruction(Template* template, Parser commandParser, Parser* afterCommandParser) {
-    Token tok = parser_next_token(&commandParser);
+    Token tok = templator_parser_next_token(&commandParser);
     if (tok.type == NONE) {
         return TEMPLATE_NO_INSTRUCTION_IN_BRACKETS;
     }
-    Token nextToken = parser_next_token(&commandParser);
+    Token nextToken = templator_parser_next_token(&commandParser);
     if (tok.type == KEYWORD_ENDIF && nextToken.type == NONE) {
         return TEMPLATOR_PARSING_ENDED_WITH_ENDIF;
     }

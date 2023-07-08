@@ -22,7 +22,7 @@ int templator_is_operator(int character) {
     }
 }
 
-Token parser_next_token(Parser* parser) {
+Token templator_parser_next_token(Parser* parser) {
     Token res;
     res.data = NULL;
     res.len = 0;
@@ -74,7 +74,7 @@ Token parser_next_token(Parser* parser) {
 }
 
 Token peek_next_token(Parser parser) {
-    return parser_next_token(&parser);
+    return templator_parser_next_token(&parser);
 }
 
 #define MIN(a,b) (a > b) ? b : a
