@@ -6,9 +6,9 @@
 typedef struct {
     char* data;
     size_t len;
-} InsertTextData;
+} TemplatorInsertTextData;
 
-void insert_text_data_init(InsertTextData* itd, char* data, size_t len);
-void insert_text_data_free(InsertTextData* itd);
+void templator_insert_text_data_init(TemplatorInsertTextData* itd, char* data, size_t len);
+void templator_insert_text_data_free(TemplatorInsertTextData* itd);
 
 #endif//TEMPLATOR_INSERT_TEXT_INSTRUCTION_H

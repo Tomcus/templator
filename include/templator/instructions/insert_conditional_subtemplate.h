@@ -10,10 +10,10 @@ extern "C" {
 typedef struct {
     TemplatorComparisonChain chain;
     struct TTemplatorTemplate* templ;
-} ConditionalInsertTextData;
+} TemplatorInsertConditionalSubtemplateData;
 
-void conditional_insert_text_data_init(ConditionalInsertTextData* citd, struct TTemplatorTemplate innerTemplatorTemplate, TemplatorComparisonChain chain);
-void conditional_insert_text_data_free(ConditionalInsertTextData* citd);
+void templator_insert_conditional_subtemplate_data_init(TemplatorInsertConditionalSubtemplateData* citd, struct TTemplatorTemplate innerTemplatorTemplate, TemplatorComparisonChain chain);
+void templator_insert_conditional_subtemplate_data_free(TemplatorInsertConditionalSubtemplateData* citd);
 
 #ifdef __cplusplus
 }

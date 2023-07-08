@@ -3,7 +3,7 @@
 
 #include "instructions/insert_text_instruction.h"
 #include "instructions/insert_variable_instruction.h"
-#include "instructions/conditional_insert_text_instruction.h"
+#include "instructions/insert_conditional_subtemplate.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,9 +21,9 @@ typedef enum {
 
 typedef struct {
     union {
-        InsertTextData insertTextData;
-        InsertVariableData insertVariableData;
-        ConditionalInsertTextData conditionalInsertTextData;
+        TemplatorInsertTextData insertTextData;
+        TemplatorInsertVariableData insertVariableData;
+        TemplatorInsertConditionalSubtemplateData insertConditionalSubtemplateData;
     };
     TEMPLATOR_INSTRUNCTION_TYPE type;
 } TemplatorInstruction;
