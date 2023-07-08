@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include <string.h>
 
-int parser_is_operator(int character) {
+int templator_is_operator(int character) {
     switch(character) {
         case '+':
         case '-':
@@ -49,8 +49,8 @@ Token parser_next_token(Parser* parser) {
         return res;
     }
 
-    if (parser_is_operator(parser->data[0])) {
-        Parser parsed = parser_read_while_char(parser, parser_is_operator, true);
+    if (templator_is_operator(parser->data[0])) {
+        Parser parsed = parser_read_while_char(parser, templator_is_operator, true);
         res.data = parsed.data;
         res.len = parsed.len;
         res.type = OPERATOR;
