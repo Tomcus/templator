@@ -35,7 +35,7 @@ int template_parse(Template* template, Parser* parser) {
         parser_skip(parser, 2);
         parsed = parser_read_until_str(parser, template_is_closing_bracket, true);
         if (parsed.data == NULL) {
-            return TEMPLATE_INCOMPLETE_INSTRUCTION_BRACKETS;
+            return TEMPLATOR_INCOMPLETE_INSTRUCTION_BRACKETS;
         }
         parser_skip(parser, 2);
         int res = template_parse_instruction(template, parsed, parser);
@@ -56,7 +56,7 @@ int template_parse(Template* template, Parser* parser) {
 int template_parse_instruction(Template* template, Parser commandParser, Parser* afterCommandParser) {
     Token tok = templator_parser_next_token(&commandParser);
     if (tok.type == NONE) {
-        return TEMPLATE_NO_INSTRUCTION_IN_BRACKETS;
+        return TEMPLATOR_NO_INSTRUCTION_IN_BRACKETS;
     }
     Token nextToken = templator_parser_next_token(&commandParser);
     if (tok.type == KEYWORD_ENDIF && nextToken.type == NONE) {

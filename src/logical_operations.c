@@ -217,17 +217,17 @@ int templator_comparison_eval(Comparison* comparison, Template* templ, Variables
         case CMP_VARIABLE_EVAL:
             lhs = templator_comparison_get_lhs(comparison, templ, variables);
             if (lhs == NULL) {
-                return TEMPLATE_VARIABLE_NOT_SET;
+                return TEMPLATOR_VARIABLE_NOT_SET;
             }
             return is_variable_truthy(lhs);
         default:
             lhs = templator_comparison_get_lhs(comparison, templ, variables);
             if (lhs == NULL) {
-                return TEMPLATE_VARIABLE_NOT_SET;
+                return TEMPLATOR_VARIABLE_NOT_SET;
             }
             rhs = templator_comparison_get_rhs(comparison, templ, variables);
             if (rhs == NULL) {
-                return TEMPLATE_VARIABLE_NOT_SET;
+                return TEMPLATOR_VARIABLE_NOT_SET;
             }
 
             int res = variables_compare(lhs, rhs);

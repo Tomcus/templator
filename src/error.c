@@ -2,11 +2,11 @@
 
 const char* templator_strerror(int error_code) {
     switch (error_code) {
-        case TEMPLATE_NO_INSTRUCTION_IN_BRACKETS:
+        case TEMPLATOR_NO_INSTRUCTION_IN_BRACKETS:
             return "No instruction inside {% %}";
-        case TEMPLATE_INCOMPLETE_INSTRUCTION_BRACKETS:
+        case TEMPLATOR_INCOMPLETE_INSTRUCTION_BRACKETS:
             return "Unable to find closing \"%}\"";
-        case TEMPLATE_VARIABLE_NOT_SET:
+        case TEMPLATOR_VARIABLE_NOT_SET:
             return "Variable not set";
         case TEMPLATOR_UNEXPECTED_TOKEN:
             return "Unexpected token";

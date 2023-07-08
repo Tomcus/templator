@@ -96,7 +96,7 @@ int templator_run(const Templator* templator, Template* template, Variables* var
                 Variable* var = variables_get_variable(variables, variableName);
 
                 if (var == NULL) {
-                    return TEMPLATE_VARIABLE_NOT_SET;
+                    return TEMPLATOR_VARIABLE_NOT_SET;
                 }
 
                 switch (var->type) {
