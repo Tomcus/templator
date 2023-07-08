@@ -45,7 +45,7 @@ Token templator_parser_next_token(Parser* parser) {
         Parser parsed = parser_read_while_char(parser, isalpha, true);
         res.data = parsed.data;
         res.len = parsed.len;
-        res.type = token_get_word_type(parsed);
+        res.type = templator_get_word_type(parsed);
         return res;
     }
 
@@ -79,7 +79,7 @@ Token templator_parser_peek_token(Parser parser) {
 
 #define MIN(a,b) (a > b) ? b : a
 
-TOKEN_TYPE token_get_word_type(Parser parser) {
+TOKEN_TYPE templator_get_word_type(Parser parser) {
     if (strncmp("if", parser.data, MIN(parser.len, 2)) == 0) {
         return KEYWORD_IF;
     }
