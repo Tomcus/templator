@@ -85,12 +85,12 @@ int templator_run(const Templator* templator, Template* template, Variables* var
     char buffer[TEMPLATOR_BUFFER_SIZE];
     for (size_t i = 0; i < template->instructionsCnt; ++i) {
         buffer[0] = 0;
-        Instruction* ins = &template->instructions[i];
+        TemplatorInstruction* ins = &template->instructions[i];
         switch (ins->type) {
-            case INSERT_TEXT:
+            case TEMPLATOR_INSTRUCTION_TYPE_INSERT_TEXT:
                 appendFunction(data, ins->insertTextData.data, ins->insertTextData.len);
             break;
-            case INSERT_VARIABLE_VALUE: {
+            case TEMPLATOR_INSTRUCTION_TYPE_INSERT_VARIABLE_VALUE: {
                 size_t variableNameIndex = ins->insertVariableData.nameIndex;
                 char* variableName = template->variables[variableNameIndex];
                 Variable* var = variables_get_variable(variables, variableName);
@@ -117,7 +117,7 @@ int templator_run(const Templator* templator, Template* template, Variables* var
                 }
             }
             break;
-            case CONDITIONAL_TEXT_INSERT: {
+            case TEMPLATOR_INSTRUCTION_TYPE_INSERT_CONDITIONAL_SUBTEMPLATE: {
                 int res = comparison_chain_eval(&ins->conditionalInsertTextData.chain, template, variables);
                 if (res < 0) {
                     return res;
@@ -130,7 +130,7 @@ int templator_run(const Templator* templator, Template* template, Variables* var
                 }
             }
             break;
-            case NOOP:
+            case TEMPLATOR_INSTRUCTION_TYPE_NOOP:
             break;
         }
     }

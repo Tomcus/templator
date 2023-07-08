@@ -9,7 +9,7 @@ extern "C" {
 #endif
 
 typedef struct TTemplate {
-    Instruction* instructions;
+    TemplatorInstruction* instructions;
     size_t instructionsCnt;
     size_t instructionsCap;
     char** variables;
@@ -21,7 +21,7 @@ int template_parse(Template* templ, Parser* parser);
 int template_parse_instruction(Template* temp, Parser commandParser, Parser* afterCommandParser);
 void template_free(Template* templ);
 
-Instruction* template_add_instruction(Template* templ);
+TemplatorInstruction* template_add_instruction(Template* templ);
 size_t template_try_insert_variable(Template* templ, char* data, size_t len);
 
 int template_is_opening_bracket(char* data, size_t len);

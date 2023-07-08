@@ -19,7 +19,7 @@ int template_is_closing_bracket(char* data, size_t len) {
 }
 
 int template_parse(Template* template, Parser* parser) {
-    template->instructions = malloc(INITIAL_INSTRUCTIONS_CAPACITY * sizeof(Instruction));
+    template->instructions = malloc(INITIAL_INSTRUCTIONS_CAPACITY * sizeof(TemplatorInstruction));
     template->instructionsCnt = 0;
     template->instructionsCap = INITIAL_INSTRUCTIONS_CAPACITY;
     template->variables = malloc(INITIAL_VARIABLES_CAPACITY * sizeof(char*));
@@ -29,8 +29,8 @@ int template_parse(Template* template, Parser* parser) {
     Parser parsed = parser_read_until_str(parser, template_is_opening_bracket, true); 
     while (parsed.data != NULL) {
         if (parsed.len > 0) {
-            Instruction* ins = template_add_instruction(template);
-            insert_text_instruction_init(ins, parsed.data, parsed.len);
+            TemplatorInstruction* ins = template_add_instruction(template);
+            templator_insert_text_instruction_init(ins, parsed.data, parsed.len);
         }
         parser_skip(parser, 2);
         parsed = parser_read_until_str(parser, template_is_closing_bracket, true);
@@ -46,8 +46,8 @@ int template_parse(Template* template, Parser* parser) {
     }
 
     if (parser->len > 0) {
-        Instruction* ins = template_add_instruction(template);
-        insert_text_instruction_init(ins, parser->data, parser->len);
+        TemplatorInstruction* ins = template_add_instruction(template);
+        templator_insert_text_instruction_init(ins, parser->data, parser->len);
     }
 
     return 0;
@@ -64,14 +64,14 @@ int template_parse_instruction(Template* template, Parser commandParser, Parser*
     }
 
 
-    Instruction* instr = template_add_instruction(template);
-    instr->type = NOOP;
+    TemplatorInstruction* instr = template_add_instruction(template);
+    instr->type = TEMPLATOR_INSTRUCTION_TYPE_NOOP;
     switch (tok.type) {
         case WORD:
             if (nextToken.type != NONE) {
                 return TEMPLATOR_UNABLE_TO_PARSE_INSTRUCTION; 
             }
-            insert_variable_instruction_init(instr, template_try_insert_variable(template, tok.data, tok.len));
+            templator_insert_variable_instruction_init(instr, template_try_insert_variable(template, tok.data, tok.len));
             return 0;
         case KEYWORD_IF:
             if (nextToken.type != PAREN_OPEN) {
@@ -91,7 +91,7 @@ int template_parse_instruction(Template* template, Parser commandParser, Parser*
                     return res;
                 }
             }
-            conditional_insert_text_instruction_init(instr, subTemplate, cc);
+            templator_insert_conditional_subtemplate(instr, subTemplate, cc);
             return 0;
         default:
             return TEMPLATOR_UNABLE_TO_PARSE_INSTRUCTION;
@@ -101,7 +101,7 @@ int template_parse_instruction(Template* template, Parser commandParser, Parser*
 
 void template_free(Template* template) {
     for (size_t i = 0; i < template->instructionsCnt; ++i) {
-        instruction_free(&template->instructions[i]);
+        templator_instruction_free(&template->instructions[i]);
     }
     free(template->instructions);
     template->instructions = NULL;
@@ -112,10 +112,10 @@ void template_free(Template* template) {
     template->variables = NULL;
 }
 
-Instruction* template_add_instruction(Template* template) {
+TemplatorInstruction* template_add_instruction(Template* template) {
     if (template->instructionsCnt == template->instructionsCap) {
         template->instructionsCap *= 2;
-        template->instructions = realloc(template->instructions, template->instructionsCap * sizeof(Instruction));
+        template->instructions = realloc(template->instructions, template->instructionsCap * sizeof(TemplatorInstruction));
     }
     return &template->instructions[template->instructionsCnt++];
 }

@@ -12,12 +12,12 @@ extern "C" {
 struct TTemplate;
 
 typedef enum {
-    INSERT_TEXT,
-    INSERT_VARIABLE_VALUE,
-    CONDITIONAL_TEXT_INSERT,
+    TEMPLATOR_INSTRUCTION_TYPE_INSERT_TEXT,
+    TEMPLATOR_INSTRUCTION_TYPE_INSERT_VARIABLE_VALUE,
+    TEMPLATOR_INSTRUCTION_TYPE_INSERT_CONDITIONAL_SUBTEMPLATE,
 
-    NOOP,
-} INSTRUCTION_TYPE;
+    TEMPLATOR_INSTRUCTION_TYPE_NOOP,
+} TEMPLATOR_INSTRUNCTION_TYPE;
 
 typedef struct {
     union {
@@ -25,14 +25,14 @@ typedef struct {
         InsertVariableData insertVariableData;
         ConditionalInsertTextData conditionalInsertTextData;
     };
-    INSTRUCTION_TYPE type;
-} Instruction;
+    TEMPLATOR_INSTRUNCTION_TYPE type;
+} TemplatorInstruction;
 
-void insert_text_instruction_init(Instruction* instruction, char* data, size_t len);
-void insert_variable_instruction_init(Instruction* instruction, size_t nameIndex);
-void conditional_insert_text_instruction_init(Instruction* Instruction, struct TTemplate subTemplate, ComparisonChain comparison);
+void templator_insert_text_instruction_init(TemplatorInstruction* instruction, char* data, size_t len);
+void templator_insert_variable_instruction_init(TemplatorInstruction* instruction, size_t nameIndex);
+void templator_insert_conditional_subtemplate(TemplatorInstruction* TemplatorInstruction, struct TTemplate subTemplate, ComparisonChain comparison);
 
-void instruction_free(Instruction* instruction);
+void templator_instruction_free(TemplatorInstruction* instruction);
 
 #ifdef __cplusplus
 }
