@@ -10,12 +10,13 @@ jobs:
   build-and-tests:
     strategy:
       matrix:
-        - build: Debug
-          sanitizer: address
-        - build: Debug
-          sanitizer: undefined-behaviour
-        - build: Release
-          sanitizer: undefined-behaviour
+        include:
+          - build: Debug
+            sanitizer: address
+          - build: Debug
+            sanitizer: undefined-behaviour
+          - build: Release
+            sanitizer: undefined-behaviour
     runs-on: ubuntu-latest
     steps:
       - name: Get CMake
