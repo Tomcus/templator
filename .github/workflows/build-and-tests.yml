@@ -14,9 +14,9 @@ jobs:
           - build: Debug
             sanitizer: address
           - build: Debug
-            sanitizer: undefined-behaviour
+            sanitizer: undefined
           - build: Release
-            sanitizer: undefined-behaviour
+            sanitizer: undefined
     runs-on: ubuntu-latest
     steps:
       - name: Get CMake
@@ -32,7 +32,7 @@ jobs:
       - name: Install dependecies
         run: conan install . -s build_type=${{matrix.build}} --output-folder=build --build=missing
       - name: Configure
-        run: cmake -DCMAKE_BUILD_TYPE=${{matrix.build}} -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -S. -B ./build
+        run: cmake -DTEMPLATOR_SANITIZER=${{matrix.sanitizer}} -DCMAKE_BUILD_TYPE=${{matrix.build}} -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -S. -B ./build
       - name: Compile
         run: cmake --build build -j
       - name: Test
