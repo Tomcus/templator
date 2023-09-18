@@ -6,10 +6,16 @@ on:
   pull_request:
     branches:
       - master
-env:
-  BUILD_TYPE: Debug
 jobs:
-  build-debug:
+  build-and-tests:
+    strategy:
+      matrix:
+        - build: Debug
+          sanitizer: address
+        - build: Debug
+          sanitizer: undefined-behaviour
+        - build: Release
+          sanitizer: undefined-behaviour
     runs-on: ubuntu-latest
     steps:
       - name: Get CMake
@@ -23,9 +29,9 @@ jobs:
       - name: Setup conan profile
         run: conan profile detect --force
       - name: Install dependecies
-        run: conan install . -s build_type=${{env.BUILD_TYPE}} --output-folder=build --build=missing
+        run: conan install . -s build_type=${{matrix.BUILD_TYPE}} --output-folder=build --build=missing
       - name: Configure
-        run: cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -S. -B ./build
+        run: cmake -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -S. -B ./build
       - name: Compile
         run: cmake --build build -j
       - name: Test
