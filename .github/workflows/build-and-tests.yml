@@ -18,6 +18,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Make build directory
         run: mkdir -p build
+      - name: Install newer g++
+        uses: egor-tensin/setup-gcc@v1
       - name: Get conan
         uses: turtlebrowser/get-conan@main
       - name: Setup conan profile
