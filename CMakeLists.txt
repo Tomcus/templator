@@ -35,6 +35,10 @@ if (DEFINED TEMPLATOR_SANITIZER)
     target_compile_options(templator PUBLIC
         -fsanitize=${TEMPLATOR_SANITIZER}
     )
+
+    target_link_libraries(templator PUBLIC
+        asan
+    )
 endif()
 
 add_subdirectory(test)
