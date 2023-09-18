@@ -18,7 +18,6 @@ TEST_CASE("Test plain text templating", "[templating]") {
     templator_init(&templator);
 
     int res = templator_run_external(&templator, (char*)templatStr.c_str(), templatStr.size(), NULL, (void*)&str, realloc_str_and_append);
-    (void)res;
     REQUIRE(res == 0);
     REQUIRE(str == templatStr);
 
@@ -41,7 +40,6 @@ TEST_CASE("Test variable insertion templating", "[templating]") {
     templator_variables_set_str_variable(&vars, "d", (char *)"original text", 13);
 
     int res = templator_run_external(&templator, (char*)templatStr.c_str(), templatStr.size(), &vars, (void*)&str, realloc_str_and_append);
-    (void)res;
     REQUIRE(res == 0);
     REQUIRE(str == "a: -69, b: 420, c: coppied text, d: original text, a: -69, b: 420, test");
     templator_variables_free(&vars);
