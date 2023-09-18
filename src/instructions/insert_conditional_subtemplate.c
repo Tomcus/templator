@@ -1,4 +1,4 @@
-#include "templator/instructions/conditional_insert_text_instruction.h"
+#include "templator/instructions/insert_conditional_subtemplate.h"
 #include "templator/template.h"
 
 void templator_insert_conditional_subtemplate_data_init(TemplatorInsertConditionalSubtemplateData* citd, TemplatorTemplate innerTemplatorTemplate, TemplatorComparisonChain comp) {

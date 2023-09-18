@@ -93,23 +93,23 @@ int templator_run(const Templator* templator, TemplatorTemplate* template, Templ
             case TEMPLATOR_INSTRUCTION_TYPE_INSERT_VARIABLE_VALUE: {
                 size_t variableNameIndex = ins->insertVariableData.nameIndex;
                 char* variableName = template->variables[variableNameIndex];
-                TemplatorVariable* var = templator_variables_get_variable(variables, variableName);
+                TemplatorValue* var = templator_variables_get_variable(variables, variableName);
 
                 if (var == NULL) {
                     return TEMPLATOR_VARIABLE_NOT_SET;
                 }
 
                 switch (var->type) {
-                    case TEMPLATOR_VARIABLE_TYPE_CSTR_REF:
-                    case TEMPLATOR_VARIABLE_TYPE_CSTR_OWN:
+                    case TEMPLATOR_VALUE_TYPE_CSTR_REF:
+                    case TEMPLATOR_VALUE_TYPE_CSTR_OWN:
                         appendFunction(data, var->s.data, var->s.len);
                     break;
-                    case TEMPLATOR_VARIABLE_TYPE_INT: {
+                    case TEMPLATOR_VALUE_TYPE_INT: {
                         int len = snprintf(buffer, sizeof(var->i), "%"PRIdMAX, var->i);
                         appendFunction(data, buffer, (size_t)len);
                     }
                     break;
-                    case TEMPLATOR_VARIABLE_TYPE_UINT: {
+                    case TEMPLATOR_VALUE_TYPE_UINT: {
                         int len = snprintf(buffer, sizeof(var->i), "%"PRIuMAX, var->u);
                         appendFunction(data, buffer, (size_t)len);
                     }

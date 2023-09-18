@@ -13,7 +13,7 @@ extern "C" {
 struct TTemplatorTemplate;
 
 typedef enum {
-    TEMPLATOR_SIDE_COMPARISON_TYPE_LOCAL_VARIABLE,
+    TEMPLATOR_SIDE_COMPARISON_TYPE_LOCAL_VALUE,
     TEMPLATOR_SIDE_COMPARISON_TYPE_VARIABLE_REFERENCE,
     TEMPLATOR_SIDE_COMPARISON_TYPE_COMPARISON_CHAIN
 } TEMPLATOR_SIDE_COMPARISON_TYPE;
@@ -44,7 +44,7 @@ struct TTemplatorComparisonChain;
 
 typedef union {
     size_t variableIndex;
-    TemplatorVariable local;
+    TemplatorValue local;
     struct TTemplatorComparisonChain* chain;
 } TemplatorComparisonData;
 
@@ -62,18 +62,18 @@ typedef struct TTemplatorComparisonChain {
     struct TTemplatorComparisonChain* next;
 } TemplatorComparisonChain;
 
-bool templator_is_variable_truthy(TemplatorVariable* var);
+bool templator_is_value_truthy(TemplatorValue* var);
 
 bool templator_is_comparison_result_ok(TEMPLATOR_COMPARISON_OPERATOR op, TEMPLATOR_COMPARISON_RESULT res);
-int templator_compare_variables(TemplatorVariable* a, TemplatorVariable* b);
+int templator_compare_values(TemplatorValue* a, TemplatorValue* b);
 
 int templator_comparison_chain_parse(TemplatorComparisonChain* compChain, TemplatorParser* parser, struct TTemplatorTemplate* templ);
 int templator_comparison_parse(TemplatorComparison* comparison, TemplatorParser* parser, struct TTemplatorTemplate* templ);
 int templator_comparison_chain_validate_operator(char* data, size_t len);
 int templator_comparison_chain_eval(TemplatorComparisonChain* compChain, struct TTemplatorTemplate* templ, TemplatorVariables* variables);
 int templator_comparison_operator_validate(char* data, size_t len);
-TemplatorVariable* templator_comparison_get_lhs(TemplatorComparison* comparison, struct TTemplatorTemplate* templ, TemplatorVariables* variables);
-TemplatorVariable* templator_comparison_get_rhs(TemplatorComparison* comparison, struct TTemplatorTemplate* templ, TemplatorVariables* variables);
+TemplatorValue* templator_comparison_get_lhs(TemplatorComparison* comparison, struct TTemplatorTemplate* templ, TemplatorVariables* variables);
+TemplatorValue* templator_comparison_get_rhs(TemplatorComparison* comparison, struct TTemplatorTemplate* templ, TemplatorVariables* variables);
 
 int templator_comparison_eval(TemplatorComparison* comparison, struct TTemplatorTemplate* templ, TemplatorVariables* variables);
 void templator_comparison_chain_free(TemplatorComparisonChain* compChain);
