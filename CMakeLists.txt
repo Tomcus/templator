@@ -31,5 +31,11 @@ target_compile_options(templator PUBLIC
     -ggdb3
 )
 
+if (DEFINED TEMPLATOR_SANITIZER)
+    target_compile_options(templator PUBLIC
+        -fsanitize=${TEMPLATOR_SANITIZER}
+    )
+endif()
+
 add_subdirectory(test)
 
