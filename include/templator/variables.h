@@ -7,16 +7,17 @@
 
 #include "definitions.h"
 #include "value.h"
+#include "avl_tree.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct {
-    TemplatorValue* data;
-    size_t cap;
-    size_t len;
+    TemplatorAVLTree tree;
 } TemplatorVariables; 
+
+TemplatorAVLTreeConfig templator_variables_setup_avl_tree();
 
 void templator_variables_init(TemplatorVariables* variables);
 void templator_variables_free(TemplatorVariables* variables);

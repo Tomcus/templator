@@ -1,65 +1,63 @@
 #include "templator/variables.h"
+#include "templator/avl_tree.h"
+#include "templator/value.h"
 
 #include <string.h>
 
-#define VARIABLES_INITIAL_SIZE 10
+void value_free(TemplatorValue* val) {
+    if (val->type == TEMPLATOR_VALUE_TYPE_CSTR_OWN) {
+        free(val->s.data);
+        val->s.data = NULL;
+        val->s.len = 0;
+    }
+}
+
+const char* value_get_name(TemplatorValue* val) {
+    return val->name;
+}
+
+TemplatorAVLTreeConfig templator_variables_setup_avl_tree() {
+    TemplatorAVLTreeConfig conf;
+    conf.valueSize = sizeof(TemplatorValue);
+    conf.compareKeys = (int(*)(void*, void*))strcmp;
+    conf.getKey = (void*(*)(void*))value_get_name;
+    conf.freeNodeData = (void(*)(void*))value_free;
+    return conf;
+}
+
+static TemplatorAVLTreeConfig TEMPLATOR_VARIABLES_TREE_CONFIG;
 
 void templator_variables_init(TemplatorVariables* variables) {
-    variables->data = malloc(sizeof(TemplatorValue) * VARIABLES_INITIAL_SIZE);
-    variables->cap = VARIABLES_INITIAL_SIZE;
-    variables->len = 0;
+    if (TEMPLATOR_VARIABLES_TREE_CONFIG.getKey == NULL) {
+        TEMPLATOR_VARIABLES_TREE_CONFIG = templator_variables_setup_avl_tree();
+    }
+    templator_avl_tree_init(&variables->tree, &TEMPLATOR_VARIABLES_TREE_CONFIG);
 }
 
 void templator_variables_free(TemplatorVariables* variables) {
-    free(variables->data);
+    templator_avl_tree_free(&variables->tree);
 }
-
-#define VARIABLE_FREE(var) \
-    if (var->type == TEMPLATOR_VALUE_TYPE_CSTR_OWN && var->s.data != NULL) { \
-        free(var->s.data); \
-    } \
-
-void variables_resize(TemplatorVariables* variables) {
-    size_t newSize = variables->cap * 2;
-    variables->data = realloc(variables->data, sizeof(TemplatorValue) * newSize);
-    variables->cap = newSize;
-}
-
-#define CHECK_RESIZE_VARIABLES              \
-    if (variables->len == variables->cap) { \
-        variables_resize(variables);        \
-    }
 
 void templator_variables_set_int_variable(TemplatorVariables* variables, const char* name, intmax_t value) {
-    TemplatorValue* var = templator_variables_get_variable(variables, name);
-    if (var == NULL) {
-        CHECK_RESIZE_VARIABLES;
-        var = &variables->data[variables->len];
-        var->name = name;
-        var->type = TEMPLATOR_VALUE_TYPE_INT;
-        var->i = value;
-        variables->len++;
-    } else {
-        VARIABLE_FREE(var);
-        var->type = TEMPLATOR_VALUE_TYPE_INT;
-        var->i = value;
+    TemplatorValue* var = templator_avl_tree_insert_with_key_hint(&variables->tree, (void *)name);
+    if (var == NULL) { // already exists
+        var = templator_avl_tree_get_with_key_hint(&variables->tree, (void *)name);
+        value_free(var);
     }
+    var->name = name;
+    var->type = TEMPLATOR_VALUE_TYPE_INT;
+    var->i = value;
 }
 
 void templator_variables_set_uint_variable(TemplatorVariables* variables, const char* name, uintmax_t value) {
-    TemplatorValue* var = templator_variables_get_variable(variables, name);
-    if (var == NULL) {
-        CHECK_RESIZE_VARIABLES;
-        var = &variables->data[variables->len];
-        var->name = name;
-        var->type = TEMPLATOR_VALUE_TYPE_UINT;
-        var->u = value;
-        variables->len++;
-    } else {
-        VARIABLE_FREE(var);
-        var->type = TEMPLATOR_VALUE_TYPE_UINT;
-        var->u = value;
+    TemplatorValue* var = templator_avl_tree_insert_with_key_hint(&variables->tree, (void *)name);
+    if (var == NULL) { // already exists
+        var = templator_avl_tree_get_with_key_hint(&variables->tree, (void *)name);
+        value_free(var);
     }
+    var->name = name;
+    var->type = TEMPLATOR_VALUE_TYPE_UINT;
+    var->u = value;
 }
 
 #define STR_ASSIGN(dst, src, length) \
@@ -74,19 +72,14 @@ void templator_variables_set_uint_variable(TemplatorVariables* variables, const 
     dst.data = src;
 
 void templator_variables_set_str_variable(TemplatorVariables* variables, const char* name, char* value, size_t valueLen) {
-    TemplatorValue* var = templator_variables_get_variable(variables, name);
-    if (var == NULL) {
-        CHECK_RESIZE_VARIABLES;
-        var = &variables->data[variables->len];
-        var->name = name;
-        var->type = TEMPLATOR_VALUE_TYPE_CSTR_REF;
-        STR_ASSIGN(var->s, value, valueLen);
-        variables->len++;
-    } else {
-        VARIABLE_FREE(var);
-        var->type = TEMPLATOR_VALUE_TYPE_CSTR_REF;
-        STR_ASSIGN(var->s, value, valueLen);
+    TemplatorValue* var = templator_avl_tree_insert_with_key_hint(&variables->tree, (void *)name);
+    if (var == NULL) { // already exists
+        var = templator_avl_tree_get_with_key_hint(&variables->tree, (void *)name);
+        value_free(var);
     }
+    var->name = name;
+    var->type = TEMPLATOR_VALUE_TYPE_CSTR_REF;
+    STR_ASSIGN(var->s, value, valueLen);
 }
 
 #undef STR_CPY
@@ -97,50 +90,25 @@ void templator_variables_set_str_variable(TemplatorVariables* variables, const c
     dst.data[len] = 0;
 
 void templator_variables_set_cpy_str_variable(TemplatorVariables* variables, const char* name, char* value, size_t valueLen) {
-    TemplatorValue* var = templator_variables_get_variable(variables, name);
-    if (var == NULL) {
-        CHECK_RESIZE_VARIABLES;
-        var = &variables->data[variables->len];
-        var->name = name;
-        var->type = TEMPLATOR_VALUE_TYPE_CSTR_OWN;
-        STR_ASSIGN(var->s, value, valueLen);
-        variables->len++;
-    } else {
-        VARIABLE_FREE(var);
-        var->type = TEMPLATOR_VALUE_TYPE_CSTR_OWN;
-        STR_ASSIGN(var->s, value, valueLen);
+    TemplatorValue* var = templator_avl_tree_insert_with_key_hint(&variables->tree, (void *)name);
+    if (var == NULL) { // already exists
+        var = templator_avl_tree_get_with_key_hint(&variables->tree, (void *)name);
+        value_free(var);
     }
+    var->name = name;
+    var->type = TEMPLATOR_VALUE_TYPE_CSTR_OWN;
+    STR_ASSIGN(var->s, value, valueLen);
 }
 
 void templator_variables_clear_variables(TemplatorVariables* variables) {
-    for (size_t i = 0; i < variables->len; ++i) {
-        TemplatorValue* var = &variables->data[i];
-        VARIABLE_FREE(var);
-    }
-    variables->len = 0;
+    templator_avl_tree_free(&variables->tree);
+    variables->tree.root = NULL;
 }
 
-void templator_variables_remove_variable(TemplatorVariables* variables, const char* name) {
-    size_t i = 0;
-    for (; i < variables->len; ++i) {
-        TemplatorValue* var = &variables->data[i];
-        if (strcmp(name, var->name) == 0) {
-            VARIABLE_FREE(var);
-            variables->len -= 1;
-            break;
-        }
-    }
-    for(; i < variables->len; ++i) {
-        variables->data[i] = variables->data[i + 1];
-    }
+void templator_variables_remove_variable(TemplatorVariables*, const char*) {
+    // FIXME: Implement removing variables
 }
 
 TemplatorValue* templator_variables_get_variable(TemplatorVariables* variables, const char* name) {
-    for (size_t i = 0; i < variables->len; ++i) {
-        TemplatorValue* var = &variables->data[i];
-        if (strcmp(var->name, name) == 0) {
-            return var;
-        }
-    }
-    return NULL;
+    return templator_avl_tree_get_with_key_hint(&variables->tree, (void *)name);
 }
