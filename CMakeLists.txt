@@ -36,8 +36,12 @@ if (DEFINED TEMPLATOR_SANITIZER)
         -fsanitize=${TEMPLATOR_SANITIZER}
     )
 
+    target_link_options(templator PUBLIC
+        -fsanitize=${TEMPLATOR_SANITIZER}
+    )
+
     target_link_libraries(templator PUBLIC
-        asan
+        ubsan
     )
 endif()
 
