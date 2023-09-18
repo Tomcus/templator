@@ -30,9 +30,9 @@ jobs:
       - name: Setup conan profile
         run: conan profile detect --force
       - name: Install dependecies
-        run: conan install . -s build_type=${{matrix.BUILD_TYPE}} --output-folder=build --build=missing
+        run: conan install . -s build_type=${{matrix.build}} --output-folder=build --build=missing
       - name: Configure
-        run: cmake -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -S. -B ./build
+        run: cmake -DCMAKE_BUILD_TYPE=${{matrix.build}} -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -S. -B ./build
       - name: Compile
         run: cmake --build build -j
       - name: Test
