@@ -26,7 +26,7 @@ jobs:
       - name: Install gcc
         uses: egor-tensin/setup-gcc@v1
       - name: Install libasan
-        run: sudo apt-get install -y libasan
+        run: sudo apt-get install -y libasan5
       - name: Get conan
         uses: turtlebrowser/get-conan@main
       - name: Setup conan profile
