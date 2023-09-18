@@ -29,7 +29,7 @@ jobs:
       - name: Install dependecies
         run: conan install . -s build_type=${{env.BUILD_TYPE}} --output-folder=build --build=missing
       - name: Configure
-        run: cmake -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=build.conan_toolchain.cmake -S. -B ./build
+        run: cmake -DCMAKE_MAKE_PROGRAM=make -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=build.conan_toolchain.cmake -S. -B ./build
       - name: Compile
         run: cmake --build build -j
       - name: Test
