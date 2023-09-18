@@ -5,6 +5,7 @@ project(templator)
 find_package(Catch2 REQUIRED)
 
 add_library(templator STATIC
+    src/avl_tree.c
     src/command_tokenizer.c
     src/error.c
     src/instructions.c

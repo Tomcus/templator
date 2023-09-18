@@ -1,0 +1,260 @@
+#include "templator/avl_tree.h"
+
+#include <stdlib.h>
+
+void templator_avl_tree_init(TemplatorAVLTree* tree, TemplatorAVLTreeConfig* config) {
+    tree->config = config;
+    tree->root = NULL;
+}
+
+void templator_avl_tree_free(TemplatorAVLTree* tree) {
+    if (tree->root != NULL) {
+        templator_avl_tree_free_node(tree->root, tree->config);
+        tree->root = NULL;
+    }
+}
+
+TemplatorAVLNode* templator_avl_tree_alloc_node(TemplatorAVLTreeConfig* config, TemplatorAVLNode* parrent) {
+    TemplatorAVLNode* node = malloc(3 * sizeof(int*) + sizeof(uint16_t) + sizeof(uint8_t) + config->valueSize);
+    node->parrent = parrent;
+    node->left = node->right = NULL;
+    node->depth = 1;
+    return node;
+}
+
+void templator_avl_tree_free_node(TemplatorAVLNode* node, TemplatorAVLTreeConfig* config) {
+    if (node->left != NULL) {
+        templator_avl_tree_free_node(node->left, config);
+    }
+    if (node->right != NULL) {
+        templator_avl_tree_free_node(node->right, config);
+    }
+    if (config->freeNodeData != NULL) {
+        config->freeNodeData(&node->dataAnchror);
+    }
+    free(node);
+}
+
+void* templator_avl_tree_insert_with_key_hint(TemplatorAVLTree* tree, void* keyHint) {
+    if (tree->root == NULL) {
+        tree->root = templator_avl_tree_alloc_node(tree->config, NULL);
+        return &tree->root->dataAnchror;
+    }
+
+    TemplatorAVLNode* node = tree->root;
+    int res;
+    while ((res = tree->config->compareKeys(keyHint, tree->config->getKey(&node->dataAnchror))) != 0) {
+        if (res < 0 && node->left != NULL) {
+            node = node->left;
+        } else if (res > 0 && node->right != NULL) {
+            node = node->right;
+        } else if (res < 0) {
+            node->left = templator_avl_tree_alloc_node(tree->config, node);
+            void* toRet = &node->left->dataAnchror;
+            templator_avl_tree_bubble_up(tree, node);
+            return toRet;
+        } else if (res > 0) {
+            node->right = templator_avl_tree_alloc_node(tree->config, node);
+            void* toRet = &node->right->dataAnchror;
+            templator_avl_tree_bubble_up(tree, node);
+            return toRet;
+        }
+    }
+    return NULL;
+}
+
+void* templator_avl_tree_get_with_key_hint(TemplatorAVLTree* tree, void* keyHint) {
+    if (tree->root == NULL) {
+        return NULL;
+    }
+
+    TemplatorAVLNode* node = tree->root;
+    int res;
+    while ((res = tree->config->compareKeys(keyHint, tree->config->getKey(&node->dataAnchror))) != 0) {
+        if ((res < 0 && node->left == NULL) || (res > 0 && node->right == NULL)) {
+            return NULL;
+        } else if (res < 0) {
+            node = node->left;
+        } else {
+            node = node->right;
+        }
+    }
+    return &node->dataAnchror;
+}
+
+#define EXTRACT_DEPTH(node, prefix)          \
+    int prefix ## left = 0;                  \
+    int prefix ## right = 0;                 \
+    if (node->left != NULL) {                \
+        prefix ## left = node->left->depth;  \
+    }                                        \
+    if (node->right != NULL) {               \
+        prefix ## right = node->right->depth;\
+    }
+
+#define SET_NODE(tree, node, function)             \
+    if (node->parrent != NULL) {                   \
+        TemplatorAVLNode* parrent = node->parrent; \
+        if (parrent->left == node) {               \
+            parrent->left = function(node);        \
+        } else {                                   \
+            parrent->right = function(node);       \
+        }                                          \
+    } else {                                       \
+        tree->root = function(node);               \
+    }
+
+
+void templator_avl_tree_update_depth(TemplatorAVLNode* node) {
+    EXTRACT_DEPTH(node, );
+    node->depth = ((left > right)?(uint16_t)left:(uint16_t)right) + 1;
+}
+
+void templator_avl_tree_bubble_up(TemplatorAVLTree* tree, TemplatorAVLNode* node) {
+    while (node != NULL) {
+        EXTRACT_DEPTH(node, );
+        if (abs(left - right) > 1) {
+            if (left > right) { // left-* case
+                EXTRACT_DEPTH(node->left, left_);
+                if (left_left >= left_right) { // left-left case
+                     SET_NODE(tree, node, templator_avl_tree_left_left_rotate);
+                } else { // left-right case
+                     SET_NODE(tree, node, templator_avl_tree_left_right_rotate); 
+                }
+            } else { // right-* case
+                EXTRACT_DEPTH(node->right, right_);
+                if (right_left > right_right) { // right-left case
+                     SET_NODE(tree, node, templator_avl_tree_right_left_rotate);
+                } else { // right-right case
+                     SET_NODE(tree, node, templator_avl_tree_right_right_rotate); 
+                }
+            }
+        } else {
+            templator_avl_tree_update_depth(node);
+        }
+        node = node->parrent;
+    }
+}
+
+TemplatorAVLNode* templator_avl_tree_rotate_left(TemplatorAVLNode* node) {
+    // src: https://www.geeksforgeeks.org/insertion-in-an-avl-tree/?ref=lbp
+    // x, y can't be NULL
+    // a, b, c can be NULL
+    //    x          y   |
+    //   / \        / \  |
+    //  a   y  =>  x   c |
+    //     / \    / \    |
+    //    b   c  a   b   |
+    TemplatorAVLNode* parrent = node->parrent;
+    TemplatorAVLNode* x = node;
+    // TemplatorAVLNode* a = x->left; - unused
+    TemplatorAVLNode* y = x->right;
+    TemplatorAVLNode* b = y->left;
+    // TemplatorAVLNode* c = y->right; - unused
+
+    y->left = x;
+    x->parrent = y;
+    x->right = b;
+    templator_avl_tree_update_depth(x);
+    if (b != NULL) {
+        b->parrent = x;
+    }
+
+    y->parrent = parrent;
+    templator_avl_tree_update_depth(y);
+    return y;
+}
+
+TemplatorAVLNode* templator_avl_tree_rotate_right(TemplatorAVLNode* node) {
+    // src: https://www.geeksforgeeks.org/insertion-in-an-avl-tree/?ref=lbp
+    // x, y can't be NULL
+    // a, b, c can be NULL
+    //     y        x     |
+    //    / \      / \    |
+    //   x   c => a   y   |
+    //  / \          / \  |
+    // a   b        b   c |
+    TemplatorAVLNode* parrent = node->parrent;
+    TemplatorAVLNode* y = node;
+    TemplatorAVLNode* x = y->left;
+    // TemplatorAVLNode* c = y->right;
+    // TemplatorAVLNode* a = x->left;
+    TemplatorAVLNode* b = x->right;
+
+    x->right = y;
+    y->parrent = x;
+    y->left = b;
+    templator_avl_tree_update_depth(y);
+    if (b != NULL) {
+        b->parrent = y;
+    }
+
+    x->parrent = parrent;
+    templator_avl_tree_update_depth(x);
+    return x;
+}
+
+TemplatorAVLNode* templator_avl_tree_right_right_rotate(TemplatorAVLNode* node) {
+    // src: https://www.geeksforgeeks.org/insertion-in-an-avl-tree/?ref=lbp
+    //    z                               y        |
+    //  /  \                            /   \      |
+    // T1   y     Left Rotate(z)       z      x    |
+    //     /  \   - - - - - - - ->    / \    / \   |
+    //    T2   x                     T1  T2 T3  T4 |
+    //        / \                                  |
+    //      T3  T4                                 |
+
+    return templator_avl_tree_rotate_left(node);
+}
+
+TemplatorAVLNode* templator_avl_tree_right_left_rotate(TemplatorAVLNode* node) {
+    // src: https://www.geeksforgeeks.org/insertion-in-an-avl-tree/?ref=lbp
+    //    z                            z                            x        |
+    //   / \                          / \                          /  \      |
+    // T1   y   Right Rotate (y)    T1   x      Left Rotate(z)   z      y    |
+    //     / \  - - - - - - - - ->     /  \   - - - - - - - ->  / \    / \   |
+    //    x   T4                      T2   y                  T1  T2  T3  T4 |
+    //   / \                              /  \                               |
+    // T2   T3                           T3  T4                              |
+
+    TemplatorAVLNode* z = node;
+    TemplatorAVLNode* y = node->right;
+    z->right = templator_avl_tree_rotate_right(y);
+    return templator_avl_tree_rotate_left(z);
+}
+
+TemplatorAVLNode* templator_avl_tree_left_right_rotate(TemplatorAVLNode* node) {
+    // src: https://www.geeksforgeeks.org/insertion-in-an-avl-tree/?ref=lbp
+    //      z                               z                           x       |
+    //     / \                            /   \                        /  \     |
+    //    y   T4  Left Rotate (y)        x    T4  Right Rotate(z)    y      z   |
+    //   / \      - - - - - - - - ->    /  \      - - - - - - - ->  / \    / \  |
+    // T1   x                          y    T3                    T1  T2 T3  T4 |
+    //     / \                        / \                                       |
+    //   T2   T3                    T1   T2                                     |
+
+    TemplatorAVLNode* z = node;
+    TemplatorAVLNode* y = z->left;
+    z->left = templator_avl_tree_rotate_left(y);
+    return templator_avl_tree_rotate_right(z);
+}
+
+TemplatorAVLNode* templator_avl_tree_left_left_rotate(TemplatorAVLNode* node) {
+    // src: https://www.geeksforgeeks.org/insertion-in-an-avl-tree/?ref=lbp
+    //         z                                      y        | 
+    //        / \                                   /   \      |
+    //       y   T4      Right Rotate (z)          x      z    |
+    //      / \          - - - - - - - - ->      /  \    /  \  |
+    //     x   T3                               T1  T2  T3  T4 |
+    //    / \                                                  |
+    //  T1   T2                                                |
+
+    return templator_avl_tree_rotate_right(node);
+}
+
+
+void* templator_avl_tree_helper_identity(void * self) {
+    return self;
+}
+
+void templator_avl_tree_helper_nop(void*) { }
