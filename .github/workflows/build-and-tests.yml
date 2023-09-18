@@ -21,7 +21,7 @@ jobs:
       - name: Get conan
         uses: turtlebrowser/get-conan@main
       - name: Setup conan profile
-        run: conan profile new default --detect
+        run: conan profile detect --force
       - name: Install dependecies 
         run: conan install . -s build_type=${{env.BUILD_TYPE}} --output-folder=build --build=missing
       - name: Configure
