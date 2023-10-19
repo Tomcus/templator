@@ -96,7 +96,6 @@ int templator_template_parse_instruction(TemplatorTemplate* template, TemplatorP
         default:
             return TEMPLATOR_UNABLE_TO_PARSE_INSTRUCTION;
     }
-
 }
 
 void templator_template_free(TemplatorTemplate* template) {
@@ -105,11 +104,15 @@ void templator_template_free(TemplatorTemplate* template) {
     }
     free(template->instructions);
     template->instructions = NULL;
+    template->instructionsCnt = 0;
+    template->instructionsCap = 0;
     for (size_t i = 0; i < template->variablesCnt; ++i) {
         free(template->variables[i]);
     }
     free(template->variables);
     template->variables = NULL;
+    template->variablesCnt = 0;
+    template->variablesCap = 0;
 }
 
 TemplatorInstruction* templator_template_add_instruction(TemplatorTemplate* template) {
