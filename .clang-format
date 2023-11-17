@@ -1,0 +1,8 @@
+BasedOnStyle: WebKit
+IndentWidth: 4
+BreakBeforeBraces: Attach 
+IndentCaseLabels: true
+InsertBraces: true
+InsertNewlineAtEOF: true
+BinPackArguments: false
+InsertTrailingCommas: Wrapped 
