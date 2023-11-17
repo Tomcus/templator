@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-typedef int(* TemplatorCmpValues)(TemplatorValue*, TemplatorValue*);
+typedef int (*TemplatorCmpValues)(TemplatorValue*, TemplatorValue*);
 
 int templator_cmp_int_int_values(TemplatorValue* a, TemplatorValue* b);
 int templator_cmp_str_str_values(TemplatorValue* a, TemplatorValue* b);
@@ -17,4 +17,4 @@ int templator_unknown_cmp(TemplatorValue* a, TemplatorValue* b);
 }
 #endif
 
-#endif//TEMPLATOR_VARIABLE_COMPARISONS_H
+#endif // TEMPLATOR_VARIABLE_COMPARISONS_H

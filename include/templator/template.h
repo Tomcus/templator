@@ -31,4 +31,4 @@ int templator_template_is_closing_bracket(char* data, size_t len);
 }
 #endif
 
-#endif//TEMPLATOR_TEMPLATE_H
+#endif // TEMPLATOR_TEMPLATE_H

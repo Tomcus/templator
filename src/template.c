@@ -1,11 +1,11 @@
+#include "templator/template.h"
 #include "templator/command_tokenizer.h"
 #include "templator/error.h"
 #include "templator/parser.h"
-#include "templator/template.h"
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 #define INITIAL_VARIABLES_CAPACITY 10
 #define INITIAL_INSTRUCTIONS_CAPACITY 20
@@ -26,7 +26,7 @@ int templator_template_parse(TemplatorTemplate* template, TemplatorParser* parse
     template->variablesCnt = 0;
     template->variablesCap = INITIAL_VARIABLES_CAPACITY;
 
-    TemplatorParser parsed = templator_parser_read_until_str(parser, templator_template_is_opening_bracket, true); 
+    TemplatorParser parsed = templator_parser_read_until_str(parser, templator_template_is_opening_bracket, true);
     while (parsed.data != NULL) {
         if (parsed.len > 0) {
             TemplatorInstruction* ins = templator_template_add_instruction(template);
@@ -63,13 +63,12 @@ int templator_template_parse_instruction(TemplatorTemplate* template, TemplatorP
         return TEMPLATOR_PARSING_ENDED_WITH_ENDIF;
     }
 
-
     TemplatorInstruction* instr = templator_template_add_instruction(template);
     instr->type = TEMPLATOR_INSTRUCTION_TYPE_NOOP;
     switch (tok.type) {
         case WORD:
             if (nextToken.type != NONE) {
-                return TEMPLATOR_UNABLE_TO_PARSE_INSTRUCTION; 
+                return TEMPLATOR_UNABLE_TO_PARSE_INSTRUCTION;
             }
             templator_insert_variable_instruction_init(instr, templator_template_try_insert_variable(template, tok.data, tok.len));
             return 0;

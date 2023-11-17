@@ -5,7 +5,7 @@
 #include <string.h>
 
 int templator_is_operator(int character) {
-    switch(character) {
+    switch (character) {
         case '+':
         case '-':
         case '/':
@@ -30,7 +30,7 @@ Token templator_parser_next_token(TemplatorParser* parser) {
 
     templator_parser_skip_while(parser, isspace);
     if (parser->len == 0) {
-        return res; 
+        return res;
     }
 
     if (isdigit(parser->data[0])) {
@@ -77,7 +77,7 @@ Token templator_parser_peek_token(TemplatorParser parser) {
     return templator_parser_next_token(&parser);
 }
 
-#define MIN(a,b) (a > b) ? b : a
+#define MIN(a, b) (a > b) ? b : a
 
 TOKEN_TYPE templator_get_word_type(TemplatorParser parser) {
     if (strncmp("if", parser.data, MIN(parser.len, 2)) == 0) {

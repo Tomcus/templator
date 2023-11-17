@@ -1,8 +1,8 @@
 #ifndef TEMPLATOR_LOGICAL_OPERATIONS
 #define TEMPLATOR_LOGICAL_OPERATIONS
 
-#include "variables.h"
 #include "parser.h"
+#include "variables.h"
 
 #include <stdbool.h>
 
@@ -82,4 +82,4 @@ void templator_comparison_chain_free(TemplatorComparisonChain* compChain);
 }
 #endif
 
-#endif//TEMPLATOR_LOGICAL_OPERATIONS
+#endif // TEMPLATOR_LOGICAL_OPERATIONS

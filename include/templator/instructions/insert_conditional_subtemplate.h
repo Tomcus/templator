@@ -19,5 +19,4 @@ void templator_insert_conditional_subtemplate_data_free(TemplatorInsertCondition
 }
 #endif
 
-#endif//TEMPLATOR_CONDITIONAL_INSERT_TEXT_INSTRUCTION_H
-
+#endif // TEMPLATOR_CONDITIONAL_INSERT_TEXT_INSTRUCTION_H

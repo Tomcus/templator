@@ -2,12 +2,12 @@
 #define TEMPLATOR_VARIABLES_H
 
 #include <stdbool.h>
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
+#include "avl_tree.h"
 #include "definitions.h"
 #include "value.h"
-#include "avl_tree.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -15,7 +15,7 @@ extern "C" {
 
 typedef struct {
     TemplatorAVLTree tree;
-} TemplatorVariables; 
+} TemplatorVariables;
 
 TemplatorAVLTreeConfig templator_variables_setup_avl_tree();
 
@@ -36,4 +36,4 @@ TemplatorValue* templator_variables_get_variable(TemplatorVariables* variables, 
 }
 #endif
 
-#endif//TEMPLATOR_VARIABLES_H
+#endif // TEMPLATOR_VARIABLES_H

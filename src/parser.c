@@ -128,7 +128,7 @@ void templator_parser_skip(TemplatorParser* parser, size_t count) {
 }
 
 void templator_parser_skip_while(TemplatorParser* parser, templatorValidateChar validator) {
-    while(parser->len > 0 && validator(parser->data[0])) {
+    while (parser->len > 0 && validator(parser->data[0])) {
         templator_parser_skip(parser, 1);
     }
 }
@@ -139,7 +139,7 @@ void templator_parser_skip_from_end(TemplatorParser* parser, size_t count) {
 }
 
 void templator_parser_skip_while_from_end(TemplatorParser* parser, templatorValidateChar validator) {
-    while(parser->len > 0 && validator(parser->data[parser->len - 1])) {
+    while (parser->len > 0 && validator(parser->data[parser->len - 1])) {
         templator_parser_skip_from_end(parser, 1);
     }
 }

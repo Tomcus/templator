@@ -17,7 +17,7 @@ void templator_insert_conditional_subtemplate(TemplatorInstruction* instruction,
 }
 
 void templator_instruction_free(TemplatorInstruction* instruction) {
-    switch(instruction->type) {
+    switch (instruction->type) {
         case TEMPLATOR_INSTRUCTION_TYPE_INSERT_TEXT:
             templator_insert_text_data_free(&instruction->insertTextData);
             break;

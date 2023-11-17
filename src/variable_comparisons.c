@@ -15,7 +15,7 @@ int templator_cmp_int_int_values(TemplatorValue* a, TemplatorValue* b) {
 }
 
 int templator_cmp_str_str_values(TemplatorValue* a, TemplatorValue* b) {
-    int res = strncmp(a->s.data, b->s.data, (a->s.len > b->s.len) ? a->s.len: b->s.len);
+    int res = strncmp(a->s.data, b->s.data, (a->s.len > b->s.len) ? a->s.len : b->s.len);
     if (res == 0) {
         return TEMPLATOR_COMPARISON_RESULT_EQ;
     } else if (res < 0) {

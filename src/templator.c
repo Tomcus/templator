@@ -1,9 +1,9 @@
 #include "templator/templator.h"
 #include "templator/error.h"
 
-#include <string.h>
-#include <stdio.h>
 #include <inttypes.h>
+#include <stdio.h>
+#include <string.h>
 
 #define TEMPLATOR_INITIAL_TEMPLATE_CAPACITY 10
 #define TEMPLATOR_BUFFER_SIZE 1024
@@ -25,14 +25,14 @@ int templator_add_named_template(Templator* templator, const char* name, char* d
     if (templator_get_template_by_name(templator, name) != NULL) {
         return 0;
     }
-    
+
     if (templator->templatesCnt == templator->templatesCap) {
         templator->templatesCap *= 2;
         templator->templates = realloc(templator->templates, templator->templatesCap * sizeof(TemplatorNameAndTemplatePair));
     }
 
     TemplatorNameAndTemplatePair* nameAndTemplate = &templator->templates[templator->templatesCnt];
-    
+
     nameAndTemplate->name = name;
     TemplatorParser parser;
     templator_parser_init(&parser, data, len);
@@ -41,7 +41,7 @@ int templator_add_named_template(Templator* templator, const char* name, char* d
         return res;
     }
 
-    templator->templatesCnt ++;
+    templator->templatesCnt++;
 
     return 1;
 }
@@ -57,7 +57,7 @@ TemplatorTemplate* templator_get_template_by_name(const Templator* templator, co
 
 int templator_run_named(const Templator* templator, const char* name, TemplatorVariables* variables, void* data, TemplatorAppendStrFunction appendFunction) {
     TemplatorTemplate* template = templator_get_template_by_name(templator, name);
-    
+
     if (template != NULL) {
         return templator_run(templator, template, variables, data, appendFunction);
     }
@@ -72,7 +72,7 @@ int templator_run_external(const Templator* templator, char* templateData, size_
 
     if (res < 0) {
         templator_template_free(&template);
-        return res;    
+        return res;
     }
 
     res = templator_run(templator, &template, variables, data, appendFunction);
@@ -89,7 +89,7 @@ int templator_run(const Templator* templator, TemplatorTemplate* template, Templ
         switch (ins->type) {
             case TEMPLATOR_INSTRUCTION_TYPE_INSERT_TEXT:
                 appendFunction(data, ins->insertTextData.data, ins->insertTextData.len);
-            break;
+                break;
             case TEMPLATOR_INSTRUCTION_TYPE_INSERT_VARIABLE_VALUE: {
                 size_t variableNameIndex = ins->insertVariableData.nameIndex;
                 char* variableName = template->variables[variableNameIndex];
@@ -103,20 +103,17 @@ int templator_run(const Templator* templator, TemplatorTemplate* template, Templ
                     case TEMPLATOR_VALUE_TYPE_CSTR_REF:
                     case TEMPLATOR_VALUE_TYPE_CSTR_OWN:
                         appendFunction(data, var->s.data, var->s.len);
-                    break;
+                        break;
                     case TEMPLATOR_VALUE_TYPE_INT: {
-                        int len = snprintf(buffer, sizeof(var->i), "%"PRIdMAX, var->i);
+                        int len = snprintf(buffer, sizeof(var->i), "%" PRIdMAX, var->i);
                         appendFunction(data, buffer, (size_t)len);
-                    }
-                    break;
+                    } break;
                     case TEMPLATOR_VALUE_TYPE_UINT: {
-                        int len = snprintf(buffer, sizeof(var->i), "%"PRIuMAX, var->u);
+                        int len = snprintf(buffer, sizeof(var->i), "%" PRIuMAX, var->u);
                         appendFunction(data, buffer, (size_t)len);
-                    }
-                    break;
+                    } break;
                 }
-            }
-            break;
+            } break;
             case TEMPLATOR_INSTRUCTION_TYPE_INSERT_CONDITIONAL_SUBTEMPLATE: {
                 int res = templator_comparison_chain_eval(&ins->insertConditionalSubtemplateData.chain, template, variables);
                 if (res < 0) {
@@ -128,10 +125,9 @@ int templator_run(const Templator* templator, TemplatorTemplate* template, Templ
                         return res;
                     }
                 }
-            }
-            break;
+            } break;
             case TEMPLATOR_INSTRUCTION_TYPE_NOOP:
-            break;
+                break;
         }
     }
     return 0;

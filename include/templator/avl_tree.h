@@ -10,7 +10,7 @@ extern "C" {
 
 typedef void* (*TemplatorAVLGetKey)(void*);
 typedef int (*TemplatorAVLCompareKey)(void*, void*);
-typedef void (*TemplatorAVLFreeNode)(void *);
+typedef void (*TemplatorAVLFreeNode)(void*);
 
 typedef struct {
     size_t valueSize;
@@ -59,4 +59,4 @@ void templator_avl_tree_helper_nop(void* self);
 }
 #endif
 
-#endif//TEMPLATOR_AVL_TREE_H
+#endif // TEMPLATOR_AVL_TREE_H

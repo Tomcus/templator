@@ -24,7 +24,7 @@ typedef enum {
 
 typedef struct {
     TEMPLATOR_ERROR_TYPE type;
-    char message[5*1024];
+    char message[5 * 1024];
     size_t len;
 } TemplatorError;
 
@@ -36,4 +36,4 @@ const char* templator_strerror(int error_code);
 }
 #endif
 
-#endif//TEMPLATOR_ERROR_H
+#endif // TEMPLATOR_ERROR_H

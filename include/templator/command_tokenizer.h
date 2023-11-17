@@ -36,4 +36,4 @@ TOKEN_TYPE templator_get_word_type(TemplatorParser parser);
 }
 #endif
 
-#endif//TEMPLATOR_COMMAND_TOKENIZER_H
+#endif // TEMPLATOR_COMMAND_TOKENIZER_H

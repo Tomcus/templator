@@ -1,15 +1,15 @@
 #ifndef TEMPLATOR_PARSER_H
 #define TEMPLATOR_PARSER_H
 
-#include <stdlib.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef int(*templatorValidateChar)(int);
-typedef int(*templatorValidateStr)(char*, size_t);
+typedef int (*templatorValidateChar)(int);
+typedef int (*templatorValidateStr)(char*, size_t);
 
 typedef struct {
     char* data;
@@ -32,4 +32,4 @@ void templator_parser_skip_while_from_end(TemplatorParser* parser, templatorVali
 }
 #endif
 
-#endif//TEMPLATOR_PARSER_H
+#endif // TEMPLATOR_PARSER_H

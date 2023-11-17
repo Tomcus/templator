@@ -1,8 +1,8 @@
 #ifndef TEMPLATOR_VALUE_H
 #define TEMPLATOR_VALUE_H
 
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,9 +28,8 @@ typedef struct {
     TEMPLATOR_VALUE_TYPE type;
 } TemplatorValue;
 
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif//TEMPLATOR_VALUE_H
+#endif // TEMPLATOR_VALUE_H

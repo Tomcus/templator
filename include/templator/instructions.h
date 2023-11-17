@@ -1,9 +1,9 @@
 #ifndef TEMPLATOR_INSTRUCTIONS_H
 #define TEMPLATOR_INSTRUCTIONS_H
 
+#include "instructions/insert_conditional_subtemplate.h"
 #include "instructions/insert_text_instruction.h"
 #include "instructions/insert_variable_instruction.h"
-#include "instructions/insert_conditional_subtemplate.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,4 +38,4 @@ void templator_instruction_free(TemplatorInstruction* instruction);
 }
 #endif
 
-#endif//TEMPLATOR_INSTRUCTIONS_H
+#endif // TEMPLATOR_INSTRUCTIONS_H
