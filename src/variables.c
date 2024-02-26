@@ -4,7 +4,7 @@
 
 #include <string.h>
 
-void value_free(TemplatorValue* val) {
+void templator_value_free(TemplatorValue* val) {
     if (val->type == TEMPLATOR_VALUE_TYPE_CSTR_OWN) {
         free(val->s.data);
         val->s.data = NULL;
@@ -12,7 +12,7 @@ void value_free(TemplatorValue* val) {
     }
 }
 
-const char* value_get_name(TemplatorValue* val) {
+const char* templator_value_get_name(TemplatorValue* val) {
     return val->name;
 }
 
@@ -20,8 +20,8 @@ TemplatorAVLTreeConfig templator_variables_setup_avl_tree() {
     TemplatorAVLTreeConfig conf;
     conf.valueSize = sizeof(TemplatorValue);
     conf.compareKeys = (int (*)(void*, void*))strcmp;
-    conf.getKey = (void* (*)(void*))value_get_name;
-    conf.freeNodeData = (void (*)(void*))value_free;
+    conf.getKey = (void* (*)(void*))templator_value_get_name;
+    conf.freeNodeData = (void (*)(void*))templator_value_free;
     return conf;
 }
 
@@ -42,7 +42,7 @@ void templator_variables_set_int_variable(TemplatorVariables* variables, const c
     TemplatorValue* var = templator_avl_tree_insert_with_key_hint(&variables->tree, (void*)name);
     if (var == NULL) { // already exists
         var = templator_avl_tree_get_with_key_hint(&variables->tree, (void*)name);
-        value_free(var);
+        templator_value_free(var);
     }
     var->name = name;
     var->type = TEMPLATOR_VALUE_TYPE_INT;
@@ -53,7 +53,7 @@ void templator_variables_set_uint_variable(TemplatorVariables* variables, const 
     TemplatorValue* var = templator_avl_tree_insert_with_key_hint(&variables->tree, (void*)name);
     if (var == NULL) { // already exists
         var = templator_avl_tree_get_with_key_hint(&variables->tree, (void*)name);
-        value_free(var);
+        templator_value_free(var);
     }
     var->name = name;
     var->type = TEMPLATOR_VALUE_TYPE_UINT;
@@ -66,7 +66,7 @@ void templator_variables_set_uint_variable(TemplatorVariables* variables, const 
         strLen = strlen(src);                     \
     }                                             \
     STR_CPY(dst, src, strLen);                    \
-    dst.len = strLen;
+    (dst).len = strLen;
 
 #define STR_CPY(dst, src, len) \
     dst.data = src;
@@ -75,7 +75,7 @@ void templator_variables_set_str_variable(TemplatorVariables* variables, const c
     TemplatorValue* var = templator_avl_tree_insert_with_key_hint(&variables->tree, (void*)name);
     if (var == NULL) { // already exists
         var = templator_avl_tree_get_with_key_hint(&variables->tree, (void*)name);
-        value_free(var);
+        templator_value_free(var);
     }
     var->name = name;
     var->type = TEMPLATOR_VALUE_TYPE_CSTR_REF;
@@ -84,16 +84,16 @@ void templator_variables_set_str_variable(TemplatorVariables* variables, const c
 
 #undef STR_CPY
 
-#define STR_CPY(dst, src, len)   \
-    dst.data = malloc(len + 1);  \
-    strncpy(dst.data, src, len); \
-    dst.data[len] = 0;
+#define STR_CPY(dst, src, len)     \
+    dst.data = malloc((len) + 1);  \
+    strncpy((dst).data, src, len); \
+    (dst).data[len] = 0;
 
 void templator_variables_set_cpy_str_variable(TemplatorVariables* variables, const char* name, char* value, size_t valueLen) {
     TemplatorValue* var = templator_avl_tree_insert_with_key_hint(&variables->tree, (void*)name);
     if (var == NULL) { // already exists
         var = templator_avl_tree_get_with_key_hint(&variables->tree, (void*)name);
-        value_free(var);
+        templator_value_free(var);
     }
     var->name = name;
     var->type = TEMPLATOR_VALUE_TYPE_CSTR_OWN;
@@ -105,7 +105,7 @@ void templator_variables_clear_variables(TemplatorVariables* variables) {
     variables->tree.root = NULL;
 }
 
-void templator_variables_remove_variable(TemplatorVariables*, const char*) {
+void templator_variables_remove_variable(TemplatorVariables* /*variables*/, const char* /*name*/) {
     // FIXME: Implement removing variables
 }
 

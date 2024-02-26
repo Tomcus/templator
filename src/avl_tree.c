@@ -50,14 +50,14 @@ void* templator_avl_tree_insert_with_key_hint(TemplatorAVLTree* tree, void* keyH
             node = node->right;
         } else if (res < 0) {
             node->left = templator_avl_tree_alloc_node(tree->config, node);
-            void* toRet = &node->left->dataAnchror;
+            void* to_ret = &node->left->dataAnchror;
             templator_avl_tree_bubble_up(tree, node);
-            return toRet;
+            return to_ret;
         } else if (res > 0) {
             node->right = templator_avl_tree_alloc_node(tree->config, node);
-            void* toRet = &node->right->dataAnchror;
+            void* to_ret = &node->right->dataAnchror;
             templator_avl_tree_bubble_up(tree, node);
-            return toRet;
+            return to_ret;
         }
     }
     return NULL;
@@ -73,7 +73,8 @@ void* templator_avl_tree_get_with_key_hint(TemplatorAVLTree* tree, void* keyHint
     while ((res = tree->config->compareKeys(keyHint, tree->config->getKey(&node->dataAnchror))) != 0) {
         if ((res < 0 && node->left == NULL) || (res > 0 && node->right == NULL)) {
             return NULL;
-        } else if (res < 0) {
+        }
+        if (res < 0) {
             node = node->left;
         } else {
             node = node->right;
@@ -82,26 +83,26 @@ void* templator_avl_tree_get_with_key_hint(TemplatorAVLTree* tree, void* keyHint
     return &node->dataAnchror;
 }
 
-#define EXTRACT_DEPTH(node, prefix)         \
-    int prefix##left = 0;                   \
-    int prefix##right = 0;                  \
-    if (node->left != NULL) {               \
-        prefix##left = node->left->depth;   \
-    }                                       \
-    if (node->right != NULL) {              \
-        prefix##right = node->right->depth; \
+#define EXTRACT_DEPTH(node, prefix)           \
+    int prefix##left = 0;                     \
+    int prefix##right = 0;                    \
+    if ((node)->left != NULL) {               \
+        prefix##left = (node)->left->depth;   \
+    }                                         \
+    if ((node)->right != NULL) {              \
+        prefix##right = (node)->right->depth; \
     }
 
-#define SET_NODE(tree, node, function)             \
-    if (node->parrent != NULL) {                   \
-        TemplatorAVLNode* parrent = node->parrent; \
-        if (parrent->left == node) {               \
-            parrent->left = function(node);        \
-        } else {                                   \
-            parrent->right = function(node);       \
-        }                                          \
-    } else {                                       \
-        tree->root = function(node);               \
+#define SET_NODE(tree, node, function)               \
+    if ((node)->parrent != NULL) {                   \
+        TemplatorAVLNode* parrent = (node)->parrent; \
+        if (parrent->left == (node)) {               \
+            parrent->left = function(node);          \
+        } else {                                     \
+            parrent->right = function(node);         \
+        }                                            \
+    } else {                                         \
+        (tree)->root = function(node);               \
     }
 
 void templator_avl_tree_update_depth(TemplatorAVLNode* node) {
@@ -145,23 +146,23 @@ TemplatorAVLNode* templator_avl_tree_rotate_left(TemplatorAVLNode* node) {
     //     / \    / \    |
     //    b   c  a   b   |
     TemplatorAVLNode* parrent = node->parrent;
-    TemplatorAVLNode* x = node;
+    TemplatorAVLNode* x_node = node;
     // TemplatorAVLNode* a = x->left; - unused
-    TemplatorAVLNode* y = x->right;
-    TemplatorAVLNode* b = y->left;
+    TemplatorAVLNode* y_node = x_node->right;
+    TemplatorAVLNode* b_node = y_node->left;
     // TemplatorAVLNode* c = y->right; - unused
 
-    y->left = x;
-    x->parrent = y;
-    x->right = b;
-    templator_avl_tree_update_depth(x);
-    if (b != NULL) {
-        b->parrent = x;
+    y_node->left = x_node;
+    x_node->parrent = y_node;
+    x_node->right = b_node;
+    templator_avl_tree_update_depth(x_node);
+    if (b_node != NULL) {
+        b_node->parrent = x_node;
     }
 
-    y->parrent = parrent;
-    templator_avl_tree_update_depth(y);
-    return y;
+    y_node->parrent = parrent;
+    templator_avl_tree_update_depth(y_node);
+    return y_node;
 }
 
 TemplatorAVLNode* templator_avl_tree_rotate_right(TemplatorAVLNode* node) {
@@ -174,23 +175,23 @@ TemplatorAVLNode* templator_avl_tree_rotate_right(TemplatorAVLNode* node) {
     //  / \          / \  |
     // a   b        b   c |
     TemplatorAVLNode* parrent = node->parrent;
-    TemplatorAVLNode* y = node;
-    TemplatorAVLNode* x = y->left;
+    TemplatorAVLNode* y_node = node;
+    TemplatorAVLNode* x_node = y_node->left;
     // TemplatorAVLNode* c = y->right;
     // TemplatorAVLNode* a = x->left;
-    TemplatorAVLNode* b = x->right;
+    TemplatorAVLNode* b_node = x_node->right;
 
-    x->right = y;
-    y->parrent = x;
-    y->left = b;
-    templator_avl_tree_update_depth(y);
-    if (b != NULL) {
-        b->parrent = y;
+    x_node->right = y_node;
+    y_node->parrent = x_node;
+    y_node->left = b_node;
+    templator_avl_tree_update_depth(y_node);
+    if (b_node != NULL) {
+        b_node->parrent = y_node;
     }
 
-    x->parrent = parrent;
-    templator_avl_tree_update_depth(x);
-    return x;
+    x_node->parrent = parrent;
+    templator_avl_tree_update_depth(x_node);
+    return x_node;
 }
 
 TemplatorAVLNode* templator_avl_tree_right_right_rotate(TemplatorAVLNode* node) {
@@ -216,10 +217,10 @@ TemplatorAVLNode* templator_avl_tree_right_left_rotate(TemplatorAVLNode* node) {
     //   / \                              /  \                               |
     // T2   T3                           T3  T4                              |
 
-    TemplatorAVLNode* z = node;
-    TemplatorAVLNode* y = node->right;
-    z->right = templator_avl_tree_rotate_right(y);
-    return templator_avl_tree_rotate_left(z);
+    TemplatorAVLNode* z_node = node;
+    TemplatorAVLNode* y_node = node->right;
+    z_node->right = templator_avl_tree_rotate_right(y_node);
+    return templator_avl_tree_rotate_left(z_node);
 }
 
 TemplatorAVLNode* templator_avl_tree_left_right_rotate(TemplatorAVLNode* node) {
@@ -232,10 +233,10 @@ TemplatorAVLNode* templator_avl_tree_left_right_rotate(TemplatorAVLNode* node) {
     //     / \                        / \                                       |
     //   T2   T3                    T1   T2                                     |
 
-    TemplatorAVLNode* z = node;
-    TemplatorAVLNode* y = z->left;
-    z->left = templator_avl_tree_rotate_left(y);
-    return templator_avl_tree_rotate_right(z);
+    TemplatorAVLNode* z_node = node;
+    TemplatorAVLNode* y_node = z_node->left;
+    z_node->left = templator_avl_tree_rotate_left(y_node);
+    return templator_avl_tree_rotate_right(z_node);
 }
 
 TemplatorAVLNode* templator_avl_tree_left_left_rotate(TemplatorAVLNode* node) {
@@ -255,4 +256,4 @@ void* templator_avl_tree_helper_identity(void* self) {
     return self;
 }
 
-void templator_avl_tree_helper_nop(void*) { }
+void templator_avl_tree_helper_nop(void* /*item*/) { }

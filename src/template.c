@@ -58,8 +58,8 @@ int templator_template_parse_instruction(TemplatorTemplate* template, TemplatorP
     if (tok.type == NONE) {
         return TEMPLATOR_NO_INSTRUCTION_IN_BRACKETS;
     }
-    Token nextToken = templator_parser_next_token(&commandTemplatorParser);
-    if (tok.type == KEYWORD_ENDIF && nextToken.type == NONE) {
+    Token next_token = templator_parser_next_token(&commandTemplatorParser);
+    if (tok.type == KEYWORD_ENDIF && next_token.type == NONE) {
         return TEMPLATOR_PARSING_ENDED_WITH_ENDIF;
     }
 
@@ -67,30 +67,30 @@ int templator_template_parse_instruction(TemplatorTemplate* template, TemplatorP
     instr->type = TEMPLATOR_INSTRUCTION_TYPE_NOOP;
     switch (tok.type) {
         case WORD:
-            if (nextToken.type != NONE) {
+            if (next_token.type != NONE) {
                 return TEMPLATOR_UNABLE_TO_PARSE_INSTRUCTION;
             }
             templator_insert_variable_instruction_init(instr, templator_template_try_insert_variable(template, tok.data, tok.len));
             return 0;
         case KEYWORD_IF:
-            if (nextToken.type != PAREN_OPEN) {
+            if (next_token.type != PAREN_OPEN) {
                 return TEMPLATOR_UNABLE_TO_PARSE_INSTRUCTION;
             }
-            TemplatorComparisonChain cc;
-            int res = templator_comparison_chain_parse(&cc, &commandTemplatorParser, template);
+            TemplatorComparisonChain chain;
+            int res = templator_comparison_chain_parse(&chain, &commandTemplatorParser, template);
             if (res < 0) {
                 return res;
             }
-            TemplatorTemplate subTemplatorTemplate;
-            res = templator_template_parse(&subTemplatorTemplate, afterCommandTemplatorParser);
+            TemplatorTemplate sub_templator_template;
+            res = templator_template_parse(&sub_templator_template, afterCommandTemplatorParser);
             if (res != TEMPLATOR_PARSING_ENDED_WITH_ENDIF) {
                 if (res == 0) {
                     return TEMPLATOR_PARSING_DIDNT_END_WITH_ENDIF;
-                } else {
-                    return res;
                 }
+                return res;
+                
             }
-            templator_insert_conditional_subtemplate(instr, subTemplatorTemplate, cc);
+            templator_insert_conditional_subtemplate(instr, sub_templator_template, chain);
             return 0;
         default:
             return TEMPLATOR_UNABLE_TO_PARSE_INSTRUCTION;

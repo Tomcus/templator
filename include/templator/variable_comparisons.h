@@ -9,9 +9,9 @@ extern "C" {
 
 typedef int (*TemplatorCmpValues)(TemplatorValue*, TemplatorValue*);
 
-int templator_cmp_int_int_values(TemplatorValue* a, TemplatorValue* b);
-int templator_cmp_str_str_values(TemplatorValue* a, TemplatorValue* b);
-int templator_unknown_cmp(TemplatorValue* a, TemplatorValue* b);
+int templator_cmp_int_int_values(TemplatorValue* lhs, TemplatorValue* rhs);
+int templator_cmp_str_str_values(TemplatorValue* lhs, TemplatorValue* rhs);
+int templator_unknown_cmp(TemplatorValue* lhs, TemplatorValue* rhs);
 
 #ifdef __cplusplus
 }

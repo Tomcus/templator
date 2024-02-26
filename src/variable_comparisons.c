@@ -3,28 +3,27 @@
 
 #include <string.h>
 
-int templator_cmp_int_int_values(TemplatorValue* a, TemplatorValue* b) {
-    intmax_t diff = a->i - b->i;
+int templator_cmp_int_int_values(TemplatorValue* lhs, TemplatorValue* rhs) {
+    intmax_t diff = lhs->i - rhs->i;
     if (diff == 0) {
         return TEMPLATOR_COMPARISON_RESULT_EQ;
-    } else if (diff < 0) {
-        return TEMPLATOR_COMPARISON_RESULT_LT;
-    } else {
-        return TEMPLATOR_COMPARISON_RESULT_GT;
     }
+    if (diff < 0) {
+        return TEMPLATOR_COMPARISON_RESULT_LT;
+    }
+    return TEMPLATOR_COMPARISON_RESULT_GT;
 }
 
-int templator_cmp_str_str_values(TemplatorValue* a, TemplatorValue* b) {
-    int res = strncmp(a->s.data, b->s.data, (a->s.len > b->s.len) ? a->s.len : b->s.len);
+int templator_cmp_str_str_values(TemplatorValue* lhs, TemplatorValue* rhs) {
+    int res = strncmp(lhs->s.data, rhs->s.data, (lhs->s.len > rhs->s.len) ? lhs->s.len : rhs->s.len);
     if (res == 0) {
         return TEMPLATOR_COMPARISON_RESULT_EQ;
-    } else if (res < 0) {
+    if (res < 0) {
         return TEMPLATOR_COMPARISON_RESULT_LT;
-    } else {
-        return TEMPLATOR_COMPARISON_RESULT_GT;
     }
+    return TEMPLATOR_COMPARISON_RESULT_GT;
 }
 
-int templator_unknown_cmp(TemplatorValue*, TemplatorValue*) {
+int templator_unknown_cmp(TemplatorValue* /*lhs*/, TemplatorValue* /*rhs*/) {
     return TEMPLATOR_UNSUPORTED_COMPARISON;
 }

@@ -1,0 +1,20 @@
+Checks: clang-analyzer-*,bugprone-*,concurrency-*,modernize-*,performance-*,portability-*,readability-*,-modernize-macro-to-enum
+CheckOptions:
+  - key: readability-identifier-naming.StructCase
+    value: CamelCase
+  - key: readability-identifier-naming.StructPrefix
+    value: Templator
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.FunctionCase
+    value: lower_case
+  - key: readability-identifier-naming.FunctionPrefix
+    value: templator_
+  - key: readability-identifier-naming.GlobalConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.StaticConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.StaticVariableCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.ParameterCase
+    value: camelBack

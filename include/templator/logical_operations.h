@@ -64,14 +64,14 @@ typedef struct TTemplatorComparisonChain {
 
 bool templator_is_value_truthy(TemplatorValue* var);
 
-bool templator_is_comparison_result_ok(TEMPLATOR_COMPARISON_OPERATOR op, TEMPLATOR_COMPARISON_RESULT res);
-int templator_compare_values(TemplatorValue* a, TemplatorValue* b);
+bool templator_is_comparison_result_ok(TEMPLATOR_COMPARISON_OPERATOR operator, TEMPLATOR_COMPARISON_RESULT res);
+int templator_compare_values(TemplatorValue* lhs, TemplatorValue* rhs);
 
 int templator_comparison_chain_parse(TemplatorComparisonChain* compChain, TemplatorParser* parser, struct TTemplatorTemplate* templ);
 int templator_comparison_parse(TemplatorComparison* comparison, TemplatorParser* parser, struct TTemplatorTemplate* templ);
-int templator_comparison_chain_validate_operator(char* data, size_t len);
+int templator_comparison_chain_validate_operator(const char* data, size_t len);
 int templator_comparison_chain_eval(TemplatorComparisonChain* compChain, struct TTemplatorTemplate* templ, TemplatorVariables* variables);
-int templator_comparison_operator_validate(char* data, size_t len);
+int templator_comparison_operator_validate(const char* data, size_t len);
 TemplatorValue* templator_comparison_get_lhs(TemplatorComparison* comparison, struct TTemplatorTemplate* templ, TemplatorVariables* variables);
 TemplatorValue* templator_comparison_get_rhs(TemplatorComparison* comparison, struct TTemplatorTemplate* templ, TemplatorVariables* variables);
 

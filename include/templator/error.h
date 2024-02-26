@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#include "templator/definitions.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -22,15 +24,17 @@ typedef enum {
     TEMPLATOR_INVALID_CHAIN_OPERATOR = -11
 } TEMPLATOR_ERROR_TYPE;
 
+#define TEMPLATOR_ERROR_MESSAGE_MAX_LEN 5ULL * TEMPLATOR_KIB
+
 typedef struct {
     TEMPLATOR_ERROR_TYPE type;
-    char message[5 * 1024];
+    char message[TEMPLATOR_ERROR_MESSAGE_MAX_LEN];
     size_t len;
 } TemplatorError;
 
 static TemplatorError TEMPLATOR_CURRENT_ERROR;
 
-const char* templator_strerror(int error_code);
+const char* templator_strerror(int errorCode);
 
 #ifdef __cplusplus
 }

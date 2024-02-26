@@ -31,12 +31,12 @@ int templator_add_named_template(Templator* templator, const char* name, char* d
         templator->templates = realloc(templator->templates, templator->templatesCap * sizeof(TemplatorNameAndTemplatePair));
     }
 
-    TemplatorNameAndTemplatePair* nameAndTemplate = &templator->templates[templator->templatesCnt];
+    TemplatorNameAndTemplatePair* name_and_template = &templator->templates[templator->templatesCnt];
 
-    nameAndTemplate->name = name;
+    name_and_template->name = name;
     TemplatorParser parser;
     templator_parser_init(&parser, data, len);
-    int res = templator_template_parse(&nameAndTemplate->templ, &parser);
+    int res = templator_template_parse(&name_and_template->templ, &parser);
     if (res < 0) {
         return res;
     }
@@ -91,9 +91,9 @@ int templator_run(const Templator* templator, TemplatorTemplate* template, Templ
                 appendFunction(data, ins->insertTextData.data, ins->insertTextData.len);
                 break;
             case TEMPLATOR_INSTRUCTION_TYPE_INSERT_VARIABLE_VALUE: {
-                size_t variableNameIndex = ins->insertVariableData.nameIndex;
-                char* variableName = template->variables[variableNameIndex];
-                TemplatorValue* var = templator_variables_get_variable(variables, variableName);
+                size_t variable_name_index = ins->insertVariableData.nameIndex;
+                char* variable_name = template->variables[variable_name_index];
+                TemplatorValue* var = templator_variables_get_variable(variables, variable_name);
 
                 if (var == NULL) {
                     return TEMPLATOR_VARIABLE_NOT_SET;

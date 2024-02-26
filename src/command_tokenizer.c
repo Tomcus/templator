@@ -16,9 +16,9 @@ int templator_is_operator(int character) {
         case '&':
         case '|':
         case '!':
-            return true;
+            return (int)true;
         default:
-            return false;
+            return (int)false;
     }
 }
 
@@ -77,7 +77,7 @@ Token templator_parser_peek_token(TemplatorParser parser) {
     return templator_parser_next_token(&parser);
 }
 
-#define MIN(a, b) (a > b) ? b : a
+#define MIN(a, b) ((a) > (b)) ? (b) : (a)
 
 TOKEN_TYPE templator_get_word_type(TemplatorParser parser) {
     if (strncmp("if", parser.data, MIN(parser.len, 2)) == 0) {

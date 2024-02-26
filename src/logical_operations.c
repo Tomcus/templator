@@ -15,24 +15,24 @@ bool templator_is_value_truthy(TemplatorValue* var) {
 
     switch (var->type) {
         case TEMPLATOR_VALUE_TYPE_INT:
-            return var->i != 0;
+            return (bool)(var->i != 0);
         case TEMPLATOR_VALUE_TYPE_UINT:
-            return var->u > 0;
+            return (bool)(var->u > 0);
         case TEMPLATOR_VALUE_TYPE_CSTR_OWN:
         case TEMPLATOR_VALUE_TYPE_CSTR_REF:
-            return var->s.len > 0;
+            return (bool)(var->s.len > 0);
     }
     return false;
 }
 
-bool templator_is_comparison_result_ok(TEMPLATOR_COMPARISON_OPERATOR op, TEMPLATOR_COMPARISON_RESULT res) {
+bool templator_is_comparison_result_ok(TEMPLATOR_COMPARISON_OPERATOR operator, TEMPLATOR_COMPARISON_RESULT res) {
     switch (res) {
         case TEMPLATOR_COMPARISON_RESULT_EQ:
-            return op == TEMPLATOR_COMPARISON_OPERATOR_EQ || op == TEMPLATOR_COMPARISON_OPERATOR_GE || op == TEMPLATOR_COMPARISON_OPERATOR_LE;
+            return (bool)(operator == TEMPLATOR_COMPARISON_OPERATOR_EQ || operator == TEMPLATOR_COMPARISON_OPERATOR_GE || operator == TEMPLATOR_COMPARISON_OPERATOR_LE);
         case TEMPLATOR_COMPARISON_RESULT_GT:
-            return op == TEMPLATOR_COMPARISON_OPERATOR_NE || op == TEMPLATOR_COMPARISON_OPERATOR_GE || op == TEMPLATOR_COMPARISON_OPERATOR_GT;
+            return (bool)(operator == TEMPLATOR_COMPARISON_OPERATOR_NE || operator == TEMPLATOR_COMPARISON_OPERATOR_GE || operator == TEMPLATOR_COMPARISON_OPERATOR_GT);
         case TEMPLATOR_COMPARISON_RESULT_LT:
-            return op == TEMPLATOR_COMPARISON_OPERATOR_NE || op == TEMPLATOR_COMPARISON_OPERATOR_LE || op == TEMPLATOR_COMPARISON_OPERATOR_LT;
+            return (bool)(operator == TEMPLATOR_COMPARISON_OPERATOR_NE || operator == TEMPLATOR_COMPARISON_OPERATOR_LE || operator == TEMPLATOR_COMPARISON_OPERATOR_LT);
     }
     return false;
 }
@@ -44,14 +44,14 @@ const TemplatorCmpValues VAR_CMPS[4][4] = {
     { templator_unknown_cmp, templator_unknown_cmp, templator_cmp_str_str_values, templator_cmp_str_str_values },
 };
 
-int templator_compare_values(TemplatorValue* a, TemplatorValue* b) {
-    TemplatorCmpValues func = VAR_CMPS[a->type][b->type];
-    return func(a, b);
+int templator_compare_values(TemplatorValue* lhs, TemplatorValue* rhs) {
+    TemplatorCmpValues func = VAR_CMPS[lhs->type][rhs->type];
+    return func(lhs, rhs);
 }
 
 int templator_comparison_parse(TemplatorComparison* comparison, TemplatorParser* parser, TemplatorTemplate* templ) {
-    Token lhsToken = templator_parser_next_token(parser);
-    switch (lhsToken.type) {
+    Token lhs_token = templator_parser_next_token(parser);
+    switch (lhs_token.type) {
         case PAREN_OPEN: {
             comparison->lhs.chain = malloc(sizeof(TemplatorComparisonChain));
             comparison->lhsType = TEMPLATOR_SIDE_COMPARISON_TYPE_COMPARISON_CHAIN;
@@ -63,13 +63,13 @@ int templator_comparison_parse(TemplatorComparison* comparison, TemplatorParser*
             return 0;
         }
         case WORD: {
-            comparison->lhs.variableIndex = templator_template_try_insert_variable(templ, lhsToken.data, lhsToken.len);
+            comparison->lhs.variableIndex = templator_template_try_insert_variable(templ, lhs_token.data, lhs_token.len);
             comparison->lhsType = TEMPLATOR_SIDE_COMPARISON_TYPE_VARIABLE_REFERENCE;
         } break;
         case NUMB: {
             char buffer[8 * sizeof(intmax_t)];
-            strncpy(buffer, lhsToken.data, lhsToken.len);
-            buffer[lhsToken.len] = 0;
+            strncpy(buffer, lhs_token.data, lhs_token.len);
+            buffer[lhs_token.len] = 0;
             intmax_t val;
             sscanf(buffer, "%" SCNdMAX, &val);
             comparison->lhs.local.type = TEMPLATOR_VALUE_TYPE_INT;
@@ -80,15 +80,15 @@ int templator_comparison_parse(TemplatorComparison* comparison, TemplatorParser*
             return TEMPLATOR_UNEXPECTED_TOKEN;
     }
 
-    Token opToken = templator_parser_peek_token(*parser);
-    switch (opToken.type) {
+    Token op_token = templator_parser_peek_token(*parser);
+    switch (op_token.type) {
         case PAREN_CLOSE:
             comparison->op = TEMPLATOR_COMPARISON_OPERATOR_VARIABLE_EVAL;
             return 0;
         case OPERATOR: {
-            int res = templator_comparison_chain_validate_operator(opToken.data, opToken.len);
+            int res = templator_comparison_chain_validate_operator(op_token.data, op_token.len);
             if (res < 0) {
-                if (templator_comparison_operator_validate(opToken.data, opToken.len) >= 0) {
+                if (templator_comparison_operator_validate(op_token.data, op_token.len) >= 0) {
                     comparison->op = TEMPLATOR_COMPARISON_OPERATOR_VARIABLE_EVAL;
                     return 0;
                 }
@@ -101,16 +101,16 @@ int templator_comparison_parse(TemplatorComparison* comparison, TemplatorParser*
             return TEMPLATOR_UNEXPECTED_TOKEN;
     }
 
-    Token rhsToken = templator_parser_next_token(parser);
-    switch (rhsToken.type) {
+    Token rhs_token = templator_parser_next_token(parser);
+    switch (rhs_token.type) {
         case WORD: {
-            comparison->rhs.variableIndex = templator_template_try_insert_variable(templ, rhsToken.data, rhsToken.len);
+            comparison->rhs.variableIndex = templator_template_try_insert_variable(templ, rhs_token.data, rhs_token.len);
             comparison->rhsType = TEMPLATOR_SIDE_COMPARISON_TYPE_VARIABLE_REFERENCE;
         } break;
         case NUMB: {
             char buffer[8 * sizeof(intmax_t)];
-            strncpy(buffer, rhsToken.data, rhsToken.len);
-            buffer[rhsToken.len] = 0;
+            strncpy(buffer, rhs_token.data, rhs_token.len);
+            buffer[rhs_token.len] = 0;
             intmax_t val;
             sscanf(buffer, "%" SCNdMAX, &val);
             comparison->rhs.local.type = TEMPLATOR_VALUE_TYPE_INT;
@@ -129,19 +129,19 @@ int templator_comparison_chain_parse(TemplatorComparisonChain* compChain, Templa
 
     while (true) {
         int res = templator_comparison_parse(&curr->cmp, parser, templ);
-        bool killLoop = false;
+        bool kill_loop = false;
 
         if (res < 0) {
             return res;
         }
 
-        Token opToken = templator_parser_next_token(parser);
-        switch (opToken.type) {
+        Token op_token = templator_parser_next_token(parser);
+        switch (op_token.type) {
             case PAREN_CLOSE:
-                killLoop = true;
+                kill_loop = true;
                 break;
             case OPERATOR: {
-                int res = templator_comparison_operator_validate(opToken.data, opToken.len);
+                int res = templator_comparison_operator_validate(op_token.data, op_token.len);
                 if (res < 0) {
                     return res;
                 }
@@ -162,7 +162,7 @@ int templator_comparison_chain_parse(TemplatorComparisonChain* compChain, Templa
                 return TEMPLATOR_UNEXPECTED_TOKEN;
         }
 
-        if (killLoop) {
+        if (kill_loop) {
             break;
         }
     }
@@ -173,7 +173,7 @@ int templator_comparison_chain_eval(TemplatorComparisonChain* compChain, Templat
     if (compChain->next == NULL) {
         return templator_comparison_eval(&compChain->cmp, templ, variables);
     }
-    const TEMPLATOR_CHAIN_OPERATOR op = compChain->op;
+    const TEMPLATOR_CHAIN_OPERATOR operator = compChain->op;
     TemplatorComparisonChain* curr = compChain;
     int res;
 
@@ -183,16 +183,17 @@ int templator_comparison_chain_eval(TemplatorComparisonChain* compChain, Templat
             return res;
         }
 
-        if (op == TEMPLATOR_CHAIN_OPERATOR_OR && res) {
+        if (operator == TEMPLATOR_CHAIN_OPERATOR_OR && res) {
             return 1;
-        } else if (op == TEMPLATOR_CHAIN_OPERATOR_AND && !res) {
+        }
+        if (operator == TEMPLATOR_CHAIN_OPERATOR_AND && !res) {
             return 0;
         }
 
         curr = curr->next;
     }
 
-    switch (op) {
+    switch (operator) {
         case TEMPLATOR_CHAIN_OPERATOR_AND:
             return 1;
         case TEMPLATOR_CHAIN_OPERATOR_OR:
@@ -212,7 +213,7 @@ int templator_comparison_eval(TemplatorComparison* comparison, TemplatorTemplate
             if (lhs == NULL) {
                 return TEMPLATOR_VARIABLE_NOT_SET;
             }
-            return templator_is_value_truthy(lhs);
+            return (int)templator_is_value_truthy(lhs);
         default:
             lhs = templator_comparison_get_lhs(comparison, templ, variables);
             if (lhs == NULL) {
@@ -225,7 +226,7 @@ int templator_comparison_eval(TemplatorComparison* comparison, TemplatorTemplate
 
             int res = templator_compare_values(lhs, rhs);
             if (res >= -1 && res <= 1) {
-                return templator_is_comparison_result_ok(comparison->op, res);
+                return (int)templator_is_comparison_result_ok(comparison->op, res);
             }
             return res;
     }
@@ -239,7 +240,7 @@ void templator_comparison_chain_free(TemplatorComparisonChain* compChain) {
     }
 }
 
-int templator_comparison_chain_validate_operator(char* data, size_t len) {
+int templator_comparison_chain_validate_operator(const char* data, size_t len) {
     switch (len) {
         case 1:
             switch (data[0]) {
@@ -275,8 +276,8 @@ TemplatorValue* templator_comparison_get_lhs(TemplatorComparison* comparison, Te
         case TEMPLATOR_SIDE_COMPARISON_TYPE_LOCAL_VALUE:
             return &comparison->lhs.local;
         case TEMPLATOR_SIDE_COMPARISON_TYPE_VARIABLE_REFERENCE: {
-            char* variableName = templ->variables[comparison->lhs.variableIndex];
-            return templator_variables_get_variable(variables, variableName);
+            char* variable_name = templ->variables[comparison->lhs.variableIndex];
+            return templator_variables_get_variable(variables, variable_name);
         }
         case TEMPLATOR_SIDE_COMPARISON_TYPE_COMPARISON_CHAIN:
             return NULL;
@@ -289,8 +290,8 @@ TemplatorValue* templator_comparison_get_rhs(TemplatorComparison* comparison, Te
         case TEMPLATOR_SIDE_COMPARISON_TYPE_LOCAL_VALUE:
             return &comparison->rhs.local;
         case TEMPLATOR_SIDE_COMPARISON_TYPE_VARIABLE_REFERENCE: {
-            char* variableName = templ->variables[comparison->rhs.variableIndex];
-            return templator_variables_get_variable(variables, variableName);
+            char* variable_name = templ->variables[comparison->rhs.variableIndex];
+            return templator_variables_get_variable(variables, variable_name);
         }
         case TEMPLATOR_SIDE_COMPARISON_TYPE_COMPARISON_CHAIN:
             return NULL;
@@ -298,7 +299,7 @@ TemplatorValue* templator_comparison_get_rhs(TemplatorComparison* comparison, Te
     return NULL;
 }
 
-int templator_comparison_operator_validate(char* data, size_t len) {
+int templator_comparison_operator_validate(const char* data, size_t len) {
     if (len != 2 || data[0] != data[1] || (data[0] != '&' && data[0] != '|')) {
         return TEMPLATOR_INVALID_CHAIN_OPERATOR;
     }
